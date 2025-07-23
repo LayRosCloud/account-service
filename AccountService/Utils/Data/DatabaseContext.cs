@@ -1,9 +1,9 @@
 ﻿using AccountService.Features.Accounts;
-using AccountService.Features.Accounts.Transactions;
+using AccountService.Features.Transactions;
 
 namespace AccountService.Utils.Data;
 
-public class DatabaseContext
+public sealed class DatabaseContext
 {
     static DatabaseContext()
     {
