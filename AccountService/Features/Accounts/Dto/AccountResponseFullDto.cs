@@ -1,8 +1,6 @@
-﻿using AccountService.Features.Transactions;
+﻿namespace AccountService.Features.Accounts.Dto;
 
-namespace AccountService.Features.Accounts;
-
-public class Account
+public class AccountResponseFullDto
 {
     public Guid Id { get; set; }
     public Guid OwnerId { get; set; }
@@ -12,5 +10,4 @@ public class Account
     public decimal? Percent { get; set; }
     public long CreatedAt { get; set; }
     public long? ClosedAt { get; set; }
-    public HashSet<Transaction> Transactions { get; } = new();
 }

@@ -1,8 +1,8 @@
 ﻿using AccountService.Features.Transactions;
 
-namespace AccountService.Features.Accounts;
+namespace AccountService.Features.Accounts.Dto;
 
-public class Account
+public class AccountResponseShortDto
 {
     public Guid Id { get; set; }
     public Guid OwnerId { get; set; }

@@ -18,6 +18,6 @@
 - зарегистрировать транзакцию по счёту (POST /accounts/\{accountId}/transactions)
 - выполнить перевод между счётами (POST /transactions)
 - выдать выписку клиенту (GET /transactions/\{transactionId})
-- проверить наличие счёта у клиента (GET /users/\{userId}/accounts/\{accountId})
+- проверить наличие счёта у клиента (GET /counterparties/\{counterpartyId}/accounts/\{accountId})
 
 Для хранения данных использованы static MemoryCollections

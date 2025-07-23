@@ -1,3 +1,5 @@
+using AccountService.Features.Accounts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -6,6 +8,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddMediatR( _ =>
 {
     
+});
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile(typeof(AccountMapper));
 });
 
 var app = builder.Build();
