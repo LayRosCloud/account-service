@@ -1,16 +1,16 @@
 using AccountService.Features.Accounts;
 using AccountService.Utils.Middleware;
-using MediatR;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehaviour<,>));
-builder.Services.AddMediatR(config =>
+builder.Services.AddMediatR(options =>
 {
-    config.AddOpenBehavior(typeof(ValidatorBehaviour<,>));
+    options.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+    options.AddOpenBehavior(typeof(ValidatorBehaviour<,>));
 });
 
 builder.Services.AddAutoMapper(config =>

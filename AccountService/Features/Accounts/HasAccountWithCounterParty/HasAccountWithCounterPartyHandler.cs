@@ -10,7 +10,7 @@ public class HasAccountWithCounterPartyHandler : IRequestHandler<HasAccountWithC
     public Task<bool> Handle(HasAccountWithCounterPartyCommand request, CancellationToken cancellationToken)
     {
         var account = _databaseContext.Accounts.SingleOrDefault(acc =>
-            acc.Id == request.AccountId && acc.OwnerId == request.CounterPartyId);
+            acc.Id == request.AccountId && acc.OwnerId == request.OwnerId);
         return Task.FromResult(account != null);
     }
 }

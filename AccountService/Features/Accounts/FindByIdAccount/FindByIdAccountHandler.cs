@@ -3,7 +3,7 @@ using AccountService.Utils.Data;
 using AutoMapper;
 using MediatR;
 
-namespace AccountService.Features.Accounts.FIndByAccount;
+namespace AccountService.Features.Accounts.FindByIdAccount;
 
 public class FindByIdAccountHandler : IRequestHandler<FindByIdAccountQuery, AccountResponseFullDto>
 {

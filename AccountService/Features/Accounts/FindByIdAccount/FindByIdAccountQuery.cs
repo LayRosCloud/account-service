@@ -1,7 +1,7 @@
 ﻿using AccountService.Features.Accounts.Dto;
 using MediatR;
 
-namespace AccountService.Features.Accounts.FIndByAccount;
+namespace AccountService.Features.Accounts.FindByIdAccount;
 
 public class FindByIdAccountQuery : IRequest<AccountResponseFullDto>
 {

@@ -4,13 +4,13 @@ namespace AccountService.Features.Accounts.HasAccountWithCounterParty
 {
     public class HasAccountWithCounterPartyCommand : IRequest<bool>
     {
-        public HasAccountWithCounterPartyCommand(Guid counterPartyId, Guid accountId)
+        public HasAccountWithCounterPartyCommand(Guid ownerId, Guid accountId)
         {
-            CounterPartyId = counterPartyId;
+            OwnerId = ownerId;
             AccountId = accountId;
         }
 
-        public Guid CounterPartyId { get; }
+        public Guid OwnerId { get; }
         public Guid AccountId { get; }
     }
 }
