@@ -7,5 +7,4 @@ public class UpdateAccountCommand : IRequest<AccountResponseShortDto>
 {
     public Guid Id { get; set; }
     public decimal? Percent { get; set; }
-    public bool IsClosed { get; set; }
 }

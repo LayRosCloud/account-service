@@ -10,14 +10,14 @@
 - [ ] В сервисе должна быть доступна работа с открытием (созданием) счетов для сотрудников банка.
 - [ ] В сервисе должна быть работа с транзакциями (переводами суммы) для сотрудников банка и клиентов.
 
-По техническому заданию необходимо:
+### По техническому заданию необходимо:
 - создать счёт (POST /accounts )
 - изменить счёт (PUT /accounts/\{accountId})
 - удалить счёт (DELETE /accounts/\{accountId})
 - получить список счетов (GET /accounts)
 - зарегистрировать транзакцию по счёту (POST /accounts/\{accountId}/transactions)
-- выполнить перевод между счётами (POST /transactions)
-- выдать выписку клиенту (GET /transactions/\{transactionId})
+- выполнить перевод между счётами (POST /accounts/\{accountId}/to/\{counterPartyAccountId}/transactions)
+- выдать выписку клиенту (предполагается выписка из счета контрагента [пример](https://sun9-11.userapi.com/impf/c851224/v851224831/e1559/qMbeDJqJHpc.jpg?size=794x474&quality=96&sign=3a1749a483a815f018656c9561c1aa00&c_uniq_tag=Y_sHvYqvuyjBvN28m7n-UQY5HGeGYvc2stp15_pAs-A&type=album)) (GET /accounts/\{accountId})
 - проверить наличие счёта у клиента (GET /counterparties/\{counterpartyId}/accounts/\{accountId})
 
 Для хранения данных использованы static MemoryCollections

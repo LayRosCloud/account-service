@@ -1,4 +1,6 @@
-﻿namespace AccountService.Features.Accounts.Dto;
+﻿using AccountService.Features.Transactions.Dto;
+
+namespace AccountService.Features.Accounts.Dto;
 
 public class AccountResponseFullDto
 {
@@ -10,4 +12,5 @@ public class AccountResponseFullDto
     public decimal? Percent { get; set; }
     public long CreatedAt { get; set; }
     public long? ClosedAt { get; set; }
+    public List<TransactionFullDto> Transactions { get; set; } = new();
 }

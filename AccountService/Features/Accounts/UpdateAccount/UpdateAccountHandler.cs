@@ -1,7 +1,6 @@
 ﻿using AccountService.Features.Accounts.Dto;
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
-using AccountService.Utils.Time;
 using AutoMapper;
 using MediatR;
 
@@ -23,8 +22,6 @@ public class UpdateAccountHandler : IRequestHandler<UpdateAccountCommand, Accoun
         
         if (account == null)
             throw new NotFoundException();
-
-        account.ClosedAt = request.IsClosed ? TimeUtils.GetTicksFromCurrentDate() : null;
 
         account.Percent = request.Percent;
 

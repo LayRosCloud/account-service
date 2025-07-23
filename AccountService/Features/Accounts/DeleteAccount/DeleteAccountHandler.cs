@@ -1,5 +1,6 @@
 ﻿using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
+using AccountService.Utils.Time;
 using MediatR;
 
 namespace AccountService.Features.Accounts.DeleteAccount;
@@ -15,7 +16,7 @@ public class DeleteAccountHandler : IRequestHandler<DeleteAccountCommand, int>
         if (account == null)
             throw new NotFoundException();
 
-        _databaseContext.Accounts.Remove(account);
+        account.ClosedAt = TimeUtils.GetTicksFromCurrentDate();
         return Task.FromResult(1);
     }
 }

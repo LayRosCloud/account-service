@@ -5,7 +5,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.FindAllAccounts;
 
-public class FindAllAccountsHandler : IRequestHandler<FindAllAccountsQuery, List<AccountResponseFullDto>>
+public class FindAllAccountsHandler : IRequestHandler<FindAllAccountsQuery, List<AccountResponseShortDto>>
 {
     private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
     private readonly IMapper _mapper;
@@ -15,9 +15,9 @@ public class FindAllAccountsHandler : IRequestHandler<FindAllAccountsQuery, List
         _mapper = mapper;
     }
 
-    public Task<List<AccountResponseFullDto>> Handle(FindAllAccountsQuery request, CancellationToken cancellationToken)
+    public Task<List<AccountResponseShortDto>> Handle(FindAllAccountsQuery request, CancellationToken cancellationToken)
     {
         var accounts = _databaseContext.Accounts;
-        return Task.FromResult(_mapper.Map<List<AccountResponseFullDto>>(accounts));
+        return Task.FromResult(_mapper.Map<List<AccountResponseShortDto>>(accounts));
     }
 }

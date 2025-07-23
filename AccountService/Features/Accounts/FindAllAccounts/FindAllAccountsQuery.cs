@@ -3,7 +3,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.FindAllAccounts;
 
-public class FindAllAccountsQuery : IRequest<List<AccountResponseFullDto>>
+public class FindAllAccountsQuery : IRequest<List<AccountResponseShortDto>>
 {
 
 }
