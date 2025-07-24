@@ -1,4 +1,5 @@
 ﻿using AccountService.Features.Transactions;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Accounts.Dto;
 

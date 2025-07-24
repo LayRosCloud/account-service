@@ -1,7 +1,9 @@
 ﻿using AccountService.Features.Transactions.CreateTransaction;
+using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Transactions;
 
@@ -16,7 +18,17 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPost("/accounts/{accountId}/transactions")]
-    public async Task<IActionResult> CreateTransaction([FromBody] CreateTransactionCommand command, Guid accountId)
+    [SwaggerOperation(
+        Summary = "Creates a new transaction",
+        Description = "Creates a transaction for a specific account for a specific amount",
+        OperationId = "CreateTransaction",
+        Tags = new[] { "Transaction" }
+    )]
+    [SwaggerResponse(200, "The transaction was created", typeof(TransactionFullDto))]
+    [SwaggerResponse(400, "Object data is invalid")]
+    [SwaggerResponse(404, "Object is not found")]
+    public async Task<IActionResult> CreateTransaction([FromBody, SwaggerRequestBody("body for create transaction", Required = true)] CreateTransactionCommand command, 
+        [SwaggerParameter("account id", Required = true)] Guid accountId)
     {
         command.AccountId = accountId;
         var transaction = await _mediator.Send(command);
@@ -24,7 +36,18 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPost("/accounts/{accountId}/to/{counterPartyAccountId}/transactions")]
-    public async Task<IActionResult> TransferBetweenAccounts([FromBody] TransferBetweenAccountsCommand command, Guid accountId, Guid counterPartyAccountId)
+    [SwaggerOperation(
+        Summary = "Creates a new transfer transaction",
+        Description = "Creates a transfer transaction for a specific accounts for a specific amount",
+        OperationId = "CreateTransferTransaction",
+        Tags = new[] { "Transaction" }
+    )]
+    [SwaggerResponse(200, "The transfer transaction  was created", typeof(TransactionFullDto))]
+    [SwaggerResponse(400, "Object data is invalid")]
+    [SwaggerResponse(404, "Object is not found")]
+    public async Task<IActionResult> TransferBetweenAccounts([FromBody, SwaggerRequestBody("body for create transfer transaction", Required = true)] TransferBetweenAccountsCommand command, 
+        [SwaggerParameter("account (from) id", Required = true)] Guid accountId,
+        [SwaggerParameter("account (to) id", Required = true)] Guid counterPartyAccountId)
     {
         command.AccountId = accountId;
         command.CounterPartyAccountId = counterPartyAccountId;
