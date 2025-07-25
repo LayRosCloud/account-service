@@ -1,5 +1,6 @@
 ﻿using AccountService.Features.Accounts.Dto;
 using AccountService.Utils.Data;
+using AccountService.Utils.Exceptions;
 using AutoMapper;
 using MediatR;
 
@@ -18,6 +19,10 @@ public class FindByIdAccountHandler : IRequestHandler<FindByIdAccountQuery, Acco
     public Task<AccountResponseFullDto> Handle(FindByIdAccountQuery request, CancellationToken cancellationToken)
     {
         var account = _databaseContext.Accounts.FirstOrDefault(acc => acc.Id == request.AccountId);
+        if (account == null)
+        {
+            throw new NotFoundException();
+        }
         return Task.FromResult(_mapper.Map<AccountResponseFullDto>(account));
     }
 }

@@ -1,11 +1,17 @@
 using AccountService.Features.Accounts;
 using AccountService.Utils.Middleware;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen(options =>
+{
+    
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Account service", Version = "v1" });
+    options.EnableAnnotations();
+});
 
 builder.Services.AddMediatR(options =>
 {
@@ -22,12 +28,11 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
+    options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui.min.css";
+});
 
 app.UseAuthorization();
 
