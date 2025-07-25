@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AccountService.Features.Accounts;
 using AccountService.Features.Transactions.Dto;
+using AccountService.Features.Transactions.Utils.Balance;
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AccountService.Utils.Time;
@@ -23,20 +24,22 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
         var account = _databaseContext.Accounts.SingleOrDefault(acc => acc.Id == request.AccountId);
 
         if (account == null)
-            throw new NotFoundException();
-
-        if (account.ClosedAt != null)
-            throw new ValidationException("Account is closed");
+            throw ExceptionUtils.GetNotFoundException("Account", request.AccountId);
 
         var transaction = _mapper.Map<Transaction>(request);
-        transaction.Currency = account.Currency;
-        transaction.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
-        transaction.Id = new Guid();
+        SetDefaultSettingTransaction(account, transaction);
+        var proxy = new PaymentProxy(transaction, account);
+        proxy.ExecuteTransaction();
 
-        account.Balance += transaction.Type == TransactionType.Credit ? transaction.Sum : -transaction.Sum;
-        
         account.Transactions.Add(transaction);
         _databaseContext.Transactions.Add(transaction);
         return Task.FromResult(_mapper.Map<TransactionFullDto>(transaction));
+    }
+
+    private static void SetDefaultSettingTransaction(Account account, Transaction transaction)
+    {
+        transaction.Currency = account.Currency;
+        transaction.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
+        transaction.Id = Guid.NewGuid();
     }
 }

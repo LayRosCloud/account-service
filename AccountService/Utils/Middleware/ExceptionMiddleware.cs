@@ -1,6 +1,6 @@
-﻿using AccountService.Utils.Exceptions;
+﻿using System.Net;
+using AccountService.Utils.Exceptions;
 using FluentValidation;
-using System.Net;
 
 namespace AccountService.Utils.Middleware;
 
@@ -40,23 +40,23 @@ public class ExceptionMiddleware
 
     private static async Task HandleException(HttpContext context, NotFoundException ex)
     {
-        context.Response.ContentType = HeaderApplicationJson;
-        context.Response.StatusCode = (int)StatusCodeNotFound;
-        await context.Response.WriteAsync(ex.Message);
+        await Handle(context, ex.Message, (int)StatusCodeNotFound);
     }
 
     private static async Task HandleException(HttpContext context, ValidationException ex)
     {
-        context.Response.ContentType = HeaderApplicationJson;
-        context.Response.StatusCode = (int)StatusCodeBadRequest;
-        await context.Response.WriteAsync(ex.Message);
+        await Handle(context, ex.Message, (int)StatusCodeBadRequest);
     }
 
     private static async Task HandleException(HttpContext context, Exception ex)
     {
-        context.Response.ContentType = HeaderApplicationJson;
-        context.Response.StatusCode = (int)StatusCodeInternalServerError;
-        await context.Response.WriteAsync(ex.Message);
+        await Handle(context, ex.Message, (int)StatusCodeInternalServerError);
     }
 
+    private static async Task Handle(HttpContext context, string message, int code)
+    {
+        context.Response.ContentType = HeaderApplicationJson;
+        context.Response.StatusCode = code;
+        await context.Response.WriteAsJsonAsync(new ExceptionDto(message, code));
+    }
 }

@@ -7,7 +7,7 @@ public class HasAccountWithCounterPartyValidator : AbstractValidator<HasAccountW
     public HasAccountWithCounterPartyValidator()
     {
         RuleFor(account => account.AccountId)
-            .NotEmpty().WithMessage("Field 'accountId' is empty"); 
+            .NotEmpty().WithMessage("Field 'accountId' is empty");
         RuleFor(account => account.OwnerId)
             .NotEmpty().WithMessage("Field 'ownerId' is empty");
     }

@@ -2,7 +2,11 @@
 
 public class NotFoundException : Exception
 {
-    public NotFoundException() : this("Object not found") {}
+    public NotFoundException() : this("Object not found")
+    {
+    }
 
-    public NotFoundException(string message) : base(message) {}
+    public NotFoundException(string message) : base(message)
+    {
+    }
 }

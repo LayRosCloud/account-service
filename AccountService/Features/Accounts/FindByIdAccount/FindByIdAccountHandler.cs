@@ -1,6 +1,5 @@
 ﻿using AccountService.Features.Accounts.Dto;
-using AccountService.Utils.Data;
-using AccountService.Utils.Exceptions;
+using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AutoMapper;
 using MediatR;
 
@@ -8,21 +7,19 @@ namespace AccountService.Features.Accounts.FindByIdAccount;
 
 public class FindByIdAccountHandler : IRequestHandler<FindByIdAccountQuery, AccountResponseFullDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
-    public FindByIdAccountHandler(IMapper mapper)
+    public FindByIdAccountHandler(IMapper mapper, IMediator mediator)
     {
         _mapper = mapper;
+        _mediator = mediator;
     }
 
-    public Task<AccountResponseFullDto> Handle(FindByIdAccountQuery request, CancellationToken cancellationToken)
+    public async Task<AccountResponseFullDto> Handle(FindByIdAccountQuery request, CancellationToken cancellationToken)
     {
-        var account = _databaseContext.Accounts.FirstOrDefault(acc => acc.Id == request.AccountId);
-        if (account == null)
-        {
-            throw new NotFoundException();
-        }
-        return Task.FromResult(_mapper.Map<AccountResponseFullDto>(account));
+        var query = new FindByIdAccountInternalQuery(request.AccountId);
+        var account = await _mediator.Send(query, cancellationToken);
+        return _mapper.Map<AccountResponseFullDto>(account);
     }
 }

@@ -10,5 +10,4 @@ public class Transaction
     public TransactionType Type { get; set; }
     public string Description { get; set; } = string.Empty;
     public long CreatedAt { get; set; }
-
 }

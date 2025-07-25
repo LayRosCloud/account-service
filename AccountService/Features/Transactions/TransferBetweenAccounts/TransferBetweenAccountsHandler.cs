@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AccountService.Features.Accounts;
+using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AccountService.Features.Transactions.Dto;
+using AccountService.Features.Transactions.Utils.Balance;
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AccountService.Utils.Time;
@@ -13,42 +15,62 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
 {
     private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
-    public TransferBetweenAccountsHandler(IMapper mapper)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator)
     {
         _mapper = mapper;
+        _mediator = mediator;
     }
-
 
     public Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
     {
-        var accountFrom = _databaseContext.Accounts.SingleOrDefault(acc => acc.Id == request.AccountId);
-        var accountTo = _databaseContext.Accounts.SingleOrDefault(acc => acc.Id == request.CounterPartyAccountId);
-       
+        var accountFrom = FindByIdAccount(request.AccountId);
+        var accountTo = FindByIdAccount(request.CounterPartyAccountId);
+
         if (accountFrom == null || accountTo == null)
-            throw new NotFoundException();
+            throw ExceptionUtils.GetNotFoundException("Accounts",
+                $"{request.AccountId} {request.CounterPartyAccountId}");
 
         CheckAccountConditions(accountFrom, accountTo);
 
+        var transactionFrom = CreateTransaction(request, accountFrom);
+        CreateTransaction(request, accountTo,
+            transactionFrom.Type == TransactionType.Debit ? TransactionType.Credit : TransactionType.Debit);
+        return Task.FromResult(_mapper.Map<TransactionFullDto>(transactionFrom));
+    }
+
+    private Transaction CreateTransaction(TransferBetweenAccountsCommand request, Account account,
+        TransactionType? type = null)
+    {
         var transaction = _mapper.Map<Transaction>(request);
-        SetDefaultSettingsTransaction(transaction, accountFrom);
+        if (type != null)
+            transaction.Type = type.Value;
+        SetDefaultSettingsTransaction(transaction, account);
+        var proxyFrom = new PaymentProxy(transaction, account);
 
-        accountFrom.Balance -= transaction.Sum;
-        accountTo.Balance += transaction.Sum;
+        proxyFrom.ExecuteTransaction();
+        AddTransactionToDatabase(transaction, account);
 
-        accountFrom.Transactions.Add(transaction);
-        accountTo.Transactions.Add(transaction);
+        return transaction;
+    }
+
+    private void AddTransactionToDatabase(Transaction transaction, Account account)
+    {
+        account.Transactions.Add(transaction);
         _databaseContext.Transactions.Add(transaction);
-        return Task.FromResult(_mapper.Map<TransactionFullDto>(transaction));
     }
 
     private static void CheckAccountConditions(Account accountFrom, Account accountTo)
     {
         if (!accountFrom.Currency.Equals(accountTo.Currency))
             throw new ValidationException("Currency accounts is different");
+    }
 
-        if (accountTo.ClosedAt != null || accountFrom.ClosedAt != null)
-            throw new ValidationException("Accounts is closed");
+    private Account FindByIdAccount(Guid id)
+    {
+        var query = new FindByIdAccountInternalQuery(id);
+        return _mapper.Map<Account>(_mediator.Send(query).Result);
     }
 
     private static void SetDefaultSettingsTransaction(Transaction transaction, Account account)
@@ -56,6 +78,6 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
         transaction.Currency = account.Currency;
         transaction.Type = TransactionType.Debit;
         transaction.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
-        transaction.Id = new Guid();
+        transaction.Id = Guid.NewGuid();
     }
 }

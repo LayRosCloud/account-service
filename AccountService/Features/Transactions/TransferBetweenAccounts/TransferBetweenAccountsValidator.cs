@@ -22,6 +22,5 @@ public class TransferBetweenAccountsValidator : AbstractValidator<TransferBetwee
 
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Field 'description' is empty");
-
     }
 }

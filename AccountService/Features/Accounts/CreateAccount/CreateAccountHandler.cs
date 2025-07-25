@@ -1,4 +1,5 @@
 ﻿using AccountService.Features.Accounts.Dto;
+using AccountService.Features.Users.VerifyUser;
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AccountService.Utils.Time;
@@ -11,23 +12,23 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, Accoun
 {
     private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
-    public CreateAccountHandler(IMapper mapper)
+    public CreateAccountHandler(IMapper mapper, IMediator mediator)
     {
         _mapper = mapper;
+        _mediator = mediator;
     }
 
     public Task<AccountResponseShortDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
-        Guid? ownerId = _databaseContext.CounterParties.SingleOrDefault(id => request.OwnerId == id);
+        var verifyUser = new VerifyUserCommand(request.OwnerId);
+        var hasOwnerUser = _mediator.Send(verifyUser, cancellationToken).Result;
 
-        if (ownerId == null)
-        {
-            throw new NotFoundException();
-        }
+        if (hasOwnerUser == false) throw ExceptionUtils.GetNotFoundException("Owner", request.OwnerId);
 
         var account = _mapper.Map<Account>(request);
-        account.Id = new Guid();
+        account.Id = Guid.NewGuid();
         account.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
         _databaseContext.Accounts.Add(account);
         return Task.FromResult(_mapper.Map<AccountResponseShortDto>(account));
