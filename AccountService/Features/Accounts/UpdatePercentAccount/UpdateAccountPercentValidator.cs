@@ -2,9 +2,9 @@
 
 namespace AccountService.Features.Accounts.UpdatePercentAccount;
 
-public class UpdateAccountValidator : AbstractValidator<UpdateAccountCommand>
+public class UpdateAccountPercentValidator : AbstractValidator<UpdateAccountPercentCommand>
 {
-    public UpdateAccountValidator()
+    public UpdateAccountPercentValidator()
     {
         RuleFor(account => account.Id)
             .NotEmpty().WithMessage("Field 'id' is empty");

@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace AccountService.Features.Accounts.FindByIdAccount;
+namespace AccountService.Features.Accounts.FindByIdAccountExtract;
 
-public class FindByAccountIdValidator : AbstractValidator<FindByIdAccountQuery>
+public class FindByAccountIdExtractValidator : AbstractValidator<FindByIdAccountExtractQuery>
 {
-    public FindByAccountIdValidator()
+    public FindByAccountIdExtractValidator()
     {
         RuleFor(x => x.AccountId)
             .NotEmpty().WithMessage("Field 'accountId' is empty");

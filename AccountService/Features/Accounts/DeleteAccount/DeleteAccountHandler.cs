@@ -16,8 +16,7 @@ public class DeleteAccountHandler : IRequestHandler<DeleteAccountCommand, Unit>
         if (account == null)
             throw ExceptionUtils.GetNotFoundException("Account", request.AccountId);
 
-        if (account.ClosedAt != null)
-            account.ClosedAt = TimeUtils.GetTicksFromCurrentDate();
+        account.ClosedAt ??= TimeUtils.GetTicksFromCurrentDate();
 
         return Task.FromResult(Unit.Value);
     }

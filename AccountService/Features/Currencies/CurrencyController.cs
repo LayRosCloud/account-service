@@ -1,7 +1,5 @@
-﻿using AccountService.Features.Accounts.FindAllAccounts;
-using AccountService.Features.Currencies.FindAllCurrency;
+﻿using AccountService.Features.Currencies.FindAllCurrency;
 using AccountService.Features.Currencies.VerifyCurrency;
-using AccountService.Features.Users.VerifyUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -10,6 +8,7 @@ namespace AccountService.Features.Currencies;
 
 [ApiController]
 [Route("/currencies")]
+[SwaggerTag("stub currencies")]
 public class CurrencyController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -45,7 +44,7 @@ public class CurrencyController : ControllerBase
     public async Task<IActionResult> Verify(string code)
     {
         var command = new VerifyCurrencyCommand(code);
-        var currenncy = await _mediator.Send(command);
-        return Ok(currenncy);
+        var currency = await _mediator.Send(command);
+        return Ok(currency);
     }
 }

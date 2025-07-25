@@ -1,11 +1,11 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Features.Transactions.Dto;
+using AccountService.Features.Transactions.Utils.Balance;
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AccountService.Utils.Time;
 using AutoMapper;
 using MediatR;
-using AccountService.Features.Transactions.Utils.Balance;
 
 namespace AccountService.Features.Transactions.CreateTransaction;
 

@@ -4,7 +4,6 @@ namespace AccountService.Features.Transactions.Utils.Balance;
 
 public class BalanceFactory
 {
-
     public IBalance GetBalance(Account account, TransactionType type)
     {
         return account.Type switch

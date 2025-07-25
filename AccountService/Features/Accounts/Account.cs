@@ -2,7 +2,7 @@
 
 namespace AccountService.Features.Accounts;
 
-public class Account
+public class Account : ICloneable
 {
     public Guid Id { get; set; }
     public Guid OwnerId { get; set; }
@@ -13,4 +13,9 @@ public class Account
     public long CreatedAt { get; set; }
     public long? ClosedAt { get; set; }
     public HashSet<Transaction> Transactions { get; } = new();
+
+    public object Clone()
+    {
+        return MemberwiseClone();
+    }
 }

@@ -17,7 +17,7 @@ public class DepositBalance : IBalance
 
     public void PerformOperation(decimal amount)
     {
-        if(IsDeposit())
+        if (IsDeposit())
             Deposit(amount);
         else
             Withdraw(amount);

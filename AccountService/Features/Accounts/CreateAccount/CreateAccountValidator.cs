@@ -6,7 +6,6 @@ namespace AccountService.Features.Accounts.CreateAccount;
 
 public class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
 {
-
     public CreateAccountValidator(IMediator mediator)
     {
         RuleFor(account => account.OwnerId)
@@ -30,7 +29,7 @@ public class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
         RuleFor(account => new { account.Balance, account.Type, account.Percent })
             .Must(x => (x.Type == AccountType.Deposit && x.Balance >= 0) ||
                        (x.Type == AccountType.Credit && x.Balance < 0 && x.Percent != 0) ||
-                       (x.Type == AccountType.Checking))
+                       x.Type == AccountType.Checking)
             .WithMessage(
                 "Incorrect balance for account type.\nDeposit account balance greater or equals 0.\nCredit account balance less 0");
     }

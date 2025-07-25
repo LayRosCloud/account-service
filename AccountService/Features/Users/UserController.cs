@@ -8,6 +8,7 @@ namespace AccountService.Features.Users;
 
 [ApiController]
 [Route("/users")]
+[SwaggerTag("stub service of users")]
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,7 +21,7 @@ public class UserController : ControllerBase
     [HttpGet]
     [SwaggerOperation(
         Summary = "Find all users",
-        Description = "Find all users",
+        Description = "Find all ids users",
         OperationId = "FindAllUser",
         Tags = new[] { "User" }
     )]
