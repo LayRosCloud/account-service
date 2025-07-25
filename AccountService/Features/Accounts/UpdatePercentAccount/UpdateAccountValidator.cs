@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
-namespace AccountService.Features.Accounts.UpdateAccount;
+namespace AccountService.Features.Accounts.UpdatePercentAccount;
+
 public class UpdateAccountValidator : AbstractValidator<UpdateAccountCommand>
 {
     public UpdateAccountValidator()
@@ -8,6 +9,6 @@ public class UpdateAccountValidator : AbstractValidator<UpdateAccountCommand>
         RuleFor(account => account.Id)
             .NotEmpty().WithMessage("Field 'id' is empty");
         RuleFor(account => account.Percent)
-            .GreaterThanOrEqualTo(0).WithMessage("Field 'percent' is less 0");
+            .GreaterThan(0).WithMessage("Field 'percent' is less 0");
     }
 }

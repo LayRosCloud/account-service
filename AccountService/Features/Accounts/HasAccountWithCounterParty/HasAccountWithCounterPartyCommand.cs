@@ -7,15 +7,13 @@ namespace AccountService.Features.Accounts.HasAccountWithCounterParty;
     Required = new[] { "accountId", "ownerId" })]
 public class HasAccountWithCounterPartyCommand : IRequest<bool>
 {
-    [SwaggerSchema("counterparty id")]
-    public Guid OwnerId { get; }
-
-    [SwaggerSchema("account id")]
-    public Guid AccountId { get; }
-
     public HasAccountWithCounterPartyCommand(Guid ownerId, Guid accountId)
     {
         OwnerId = ownerId;
         AccountId = accountId;
     }
+
+    [SwaggerSchema("counterparty id")] public Guid OwnerId { get; }
+
+    [SwaggerSchema("account id")] public Guid AccountId { get; }
 }

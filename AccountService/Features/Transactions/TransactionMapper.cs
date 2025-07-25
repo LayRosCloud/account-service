@@ -12,5 +12,6 @@ public class TransactionMapper : Profile
         CreateMap<Transaction, TransactionFullDto>();
         CreateMap<CreateTransactionCommand, Transaction>();
         CreateMap<TransferBetweenAccountsCommand, Transaction>();
+        CreateMap<TransactionFullDto, Transaction>();
     }
 }

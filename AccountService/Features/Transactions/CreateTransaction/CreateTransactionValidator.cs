@@ -13,6 +13,6 @@ public class CreateTransactionValidator : AbstractValidator<CreateTransactionCom
         RuleFor(transaction => transaction.Type)
             .NotNull().WithMessage("Field 'type' is null");
         RuleFor(transaction => transaction.AccountId)
-            .NotEmpty().WithMessage("Field 'accountId' is null");
+            .NotEmpty().WithMessage("Field 'accountId' is empty");
     }
 }

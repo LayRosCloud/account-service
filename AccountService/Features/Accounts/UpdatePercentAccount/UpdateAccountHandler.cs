@@ -4,7 +4,7 @@ using AccountService.Utils.Exceptions;
 using AutoMapper;
 using MediatR;
 
-namespace AccountService.Features.Accounts.UpdateAccount;
+namespace AccountService.Features.Accounts.UpdatePercentAccount;
 
 public class UpdateAccountHandler : IRequestHandler<UpdateAccountCommand, AccountResponseShortDto>
 {
@@ -19,13 +19,12 @@ public class UpdateAccountHandler : IRequestHandler<UpdateAccountCommand, Accoun
     public Task<AccountResponseShortDto> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
     {
         var account = _databaseContext.Accounts.FirstOrDefault(acc => acc.Id == request.Id);
-        
+
         if (account == null)
-            throw new NotFoundException();
+            throw ExceptionUtils.GetNotFoundException("Account", request.Id);
 
         account.Percent = request.Percent;
 
         return Task.FromResult(_mapper.Map<AccountResponseShortDto>(account));
     }
-
 }

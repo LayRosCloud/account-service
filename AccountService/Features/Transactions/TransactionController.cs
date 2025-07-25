@@ -27,8 +27,12 @@ public class TransactionController : ControllerBase
     [SwaggerResponse(200, "The transaction was created", typeof(TransactionFullDto))]
     [SwaggerResponse(400, "Object data is invalid")]
     [SwaggerResponse(404, "Object is not found")]
-    public async Task<IActionResult> CreateTransaction([FromBody, SwaggerRequestBody("body for create transaction", Required = true)] CreateTransactionCommand command, 
-        [SwaggerParameter("account id", Required = true)] Guid accountId)
+    public async Task<IActionResult> CreateTransaction(
+        [FromBody]
+        [SwaggerRequestBody("body for create transaction", Required = true)]
+        CreateTransactionCommand command,
+        [SwaggerParameter("account id", Required = true)]
+        Guid accountId)
     {
         command.AccountId = accountId;
         var transaction = await _mediator.Send(command);
@@ -45,9 +49,13 @@ public class TransactionController : ControllerBase
     [SwaggerResponse(200, "The transfer transaction  was created", typeof(TransactionFullDto))]
     [SwaggerResponse(400, "Object data is invalid")]
     [SwaggerResponse(404, "Object is not found")]
-    public async Task<IActionResult> TransferBetweenAccounts([FromBody, SwaggerRequestBody("body for create transfer transaction", Required = true)] TransferBetweenAccountsCommand command, 
-        [SwaggerParameter("account (from) id", Required = true)] Guid accountId,
-        [SwaggerParameter("account (to) id", Required = true)] Guid counterPartyAccountId)
+    public async Task<IActionResult> TransferBetweenAccounts(
+        [FromBody] [SwaggerRequestBody("body for create transfer transaction", Required = true)]
+        TransferBetweenAccountsCommand command,
+        [SwaggerParameter("account (from) id", Required = true)]
+        Guid accountId,
+        [SwaggerParameter("account (to) id", Required = true)]
+        Guid counterPartyAccountId)
     {
         command.AccountId = accountId;
         command.CounterPartyAccountId = counterPartyAccountId;

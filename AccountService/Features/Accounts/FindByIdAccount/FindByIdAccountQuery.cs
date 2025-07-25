@@ -8,11 +8,14 @@ namespace AccountService.Features.Accounts.FindByIdAccount;
     Required = new[] { "accountId" })]
 public class FindByIdAccountQuery : IRequest<AccountResponseFullDto>
 {
-    [SwaggerSchema("account id")]
-    public Guid AccountId { get; }
-
-    public FindByIdAccountQuery(Guid accountId)
+    public FindByIdAccountQuery(Guid accountId, long dateStart, long dateEnd)
     {
         AccountId = accountId;
+        DateStart = dateStart;
+        DateEnd = dateEnd;
     }
+
+    [SwaggerSchema("date start transactions")] public long DateStart { get; }
+    [SwaggerSchema("date end transactions")] public long DateEnd { get; }
+    [SwaggerSchema("account id")] public Guid AccountId { get; }
 }

@@ -1,7 +1,4 @@
-﻿using AccountService.Features.Transactions;
-using Swashbuckle.AspNetCore.Annotations;
-
-namespace AccountService.Features.Accounts.Dto;
+﻿namespace AccountService.Features.Accounts.Dto;
 
 public class AccountResponseShortDto
 {

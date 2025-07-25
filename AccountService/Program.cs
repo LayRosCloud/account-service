@@ -2,6 +2,8 @@ using AccountService.Features.Accounts;
 using AccountService.Utils.Middleware;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using AccountService.Features.Accounts.FindByIdAccount;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,7 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Account service", Version = "v1" });
     options.EnableAnnotations();
 });
-
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(options =>
 {
     options.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
@@ -27,7 +29,6 @@ builder.Services.AddAutoMapper(config =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
-
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {

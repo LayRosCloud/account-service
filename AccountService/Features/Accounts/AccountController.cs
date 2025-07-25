@@ -3,7 +3,7 @@ using AccountService.Features.Accounts.DeleteAccount;
 using AccountService.Features.Accounts.Dto;
 using AccountService.Features.Accounts.FindAllAccounts;
 using AccountService.Features.Accounts.FindByIdAccount;
-using AccountService.Features.Accounts.UpdateAccount;
+using AccountService.Features.Accounts.UpdatePercentAccount;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -41,14 +41,16 @@ public class AccountController : ControllerBase
         Summary = "Finds by id account",
         Description = "finds by  accounts without transactions",
         OperationId = "FindByIdAccount",
-        Tags = new[] { "Account", }
+        Tags = new[] { "Account" }
     )]
     [SwaggerResponse(200, "Finds by id account", typeof(AccountResponseFullDto))]
     [SwaggerResponse(400, "AccountId is empty or bad format UUID")]
     [SwaggerResponse(404, "Account with id is not found")]
-    public async Task<IActionResult> FindByAccountId([SwaggerParameter("account id", Required = true)] Guid accountId)
+    public async Task<IActionResult> FindByAccountId(
+        [SwaggerParameter("account id", Required = true)] Guid accountId,
+        long dateStart, long dateEnd)
     {
-        var query = new FindByIdAccountQuery(accountId);
+        var query = new FindByIdAccountQuery(accountId, dateStart, dateEnd);
         var account = await _mediator.Send(query);
         return Ok(account);
     }
