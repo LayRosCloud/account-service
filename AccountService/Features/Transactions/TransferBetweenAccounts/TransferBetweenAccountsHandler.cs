@@ -76,7 +76,6 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
     private static void SetDefaultSettingsTransaction(Transaction transaction, Account account)
     {
         transaction.Currency = account.Currency;
-        transaction.Type = TransactionType.Debit;
         transaction.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
         transaction.Id = Guid.NewGuid();
     }
