@@ -15,6 +15,9 @@ public class TransferBetweenAccountsCommand : IRequest<TransactionFullDto>
     [SwaggerSchema("amount of transaction")]
     public decimal Sum { get; set; }
 
+    [SwaggerSchema("type of transaction", WriteOnly = true, ReadOnly = true)]
+    public TransactionType Type { get; set; }
+
     [SwaggerSchema("description transaction")]
     public string Description { get; set; } = string.Empty;
 }

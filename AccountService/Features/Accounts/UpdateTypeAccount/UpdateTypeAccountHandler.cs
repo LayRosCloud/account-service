@@ -21,7 +21,7 @@ public class UpdateTypeAccountHandler : IRequestHandler<UpdateTypeAccountCommand
     {
         var query = new FindByIdAccountInternalQuery(request.AccountId);
         var account = _mediator.Send(query, cancellationToken).Result;
-        if (account.Type != AccountType.Checking)
+        if (account.Type != AccountType.Checking && request.Type != AccountType.Checking)
             throw new ValidationException("You cannot change not Checking type");
 
         if (request.Type == AccountType.Deposit && account.Balance < 0)

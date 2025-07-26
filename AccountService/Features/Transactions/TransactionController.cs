@@ -1,4 +1,5 @@
-﻿using AccountService.Features.Transactions.CreateTransaction;
+﻿using AccountService.Features.Accounts;
+using AccountService.Features.Transactions.CreateTransaction;
 using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.FindByAccountIdTransactions;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
@@ -70,6 +71,7 @@ public class TransactionController : ControllerBase
         [FromBody] [SwaggerRequestBody("body for create transfer transaction", Required = true)]
         TransferBetweenAccountsCommand command)
     {
+        command.Type = TransactionType.Credit;
         var transaction = await _mediator.Send(command);
         return Ok(transaction);
     }

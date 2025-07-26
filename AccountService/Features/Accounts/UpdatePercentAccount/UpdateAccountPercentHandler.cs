@@ -24,7 +24,7 @@ public class UpdateAccountPercentHandler : IRequestHandler<UpdateAccountPercentC
 
         if (account == null)
             throw ExceptionUtils.GetNotFoundException("Account", request.Id);
-        if (account is { Type: AccountType.Credit, Percent: null })
+        if (account.Type == AccountType.Credit && request.Percent == null)
             throw new ValidationException("Percent is null of Credit type account");
         account.Percent = request.Percent;
 
