@@ -25,7 +25,7 @@ public class DepositBalance : IBalance
 
     private bool IsDeposit()
     {
-        return _type == TransactionType.Credit;
+        return _type == TransactionType.Debit;
     }
 
     private void Withdraw(decimal amount)

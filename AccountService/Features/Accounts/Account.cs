@@ -12,7 +12,7 @@ public class Account : ICloneable
     public decimal? Percent { get; set; }
     public long CreatedAt { get; set; }
     public long? ClosedAt { get; set; }
-    public HashSet<Transaction> Transactions { get; } = new();
+    public List<Transaction> Transactions { get; } = new();
 
     public object Clone()
     {

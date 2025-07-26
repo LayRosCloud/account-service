@@ -17,21 +17,14 @@ public class CreditBalance : IBalance
 
     public void PerformOperation(decimal amount)
     {
-        if (IsDeposit())
-            Deposit(amount);
-        else
-            Withdraw(amount);
+        if (IsDeposit() == false)
+            throw new ValidationException("You cannot withdraw from Credit account");
+        Deposit(amount);
     }
 
     private bool IsDeposit()
     {
-        return _type == TransactionType.Credit;
-    }
-
-    private void Withdraw(decimal amount)
-    {
-        Validate(_account, amount);
-        _account.Balance -= amount;
+        return _type == TransactionType.Debit;
     }
 
     private void Deposit(decimal amount)

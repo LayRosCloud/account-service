@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountService.Tests", "AccountService.Tests\AccountService.Tests.csproj", "{A64DFFF5-0ADA-4955-B849-CD4162D1FEEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{BDA589C9-3966-41DB-8465-05396358BD54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDA589C9-3966-41DB-8465-05396358BD54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDA589C9-3966-41DB-8465-05396358BD54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A64DFFF5-0ADA-4955-B849-CD4162D1FEEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A64DFFF5-0ADA-4955-B849-CD4162D1FEEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A64DFFF5-0ADA-4955-B849-CD4162D1FEEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A64DFFF5-0ADA-4955-B849-CD4162D1FEEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
