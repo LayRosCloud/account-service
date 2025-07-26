@@ -5,17 +5,14 @@ namespace AccountService.Features.Transactions.Dto;
 [SwaggerSchema("Transaction of account with balance")]
 public class TransactionFullDto
 {
-    [SwaggerSchema("id")]
-    public Guid Id { get; set; }
+    [SwaggerSchema("id")] public Guid Id { get; set; }
 
-    [SwaggerSchema("account id")]
-    public Guid AccountId { get; set; }
+    [SwaggerSchema("account id")] public Guid AccountId { get; set; }
 
     [SwaggerSchema("counterparty account id")]
     public Guid? CounterPartyAccountId { get; set; }
 
-    [SwaggerSchema("amount")]
-    public decimal Sum { get; set; }
+    [SwaggerSchema("amount")] public decimal Sum { get; set; }
 
     [SwaggerSchema("currency of transaction")]
     public string Currency { get; set; } = string.Empty;
