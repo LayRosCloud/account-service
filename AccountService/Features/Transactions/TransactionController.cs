@@ -1,5 +1,4 @@
-﻿using AccountService.Features.Accounts;
-using AccountService.Features.Transactions.CreateTransaction;
+﻿using AccountService.Features.Transactions.CreateTransaction;
 using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.FindByAccountIdTransactions;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
