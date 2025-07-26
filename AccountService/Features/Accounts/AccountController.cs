@@ -74,11 +74,11 @@ public class AccountController : ControllerBase
         [SwaggerParameter("account id", Required = true)]
         Guid accountId,
         [SwaggerParameter("date start in ticks", Required = true)]
-        long dateStart,
+        DateTime dateStart,
         [SwaggerParameter("date end in ticks", Required = true)]
-        long dateEnd)
+        DateTime dateEnd)
     {
-        var query = new FindByIdAccountExtractQuery(accountId, dateStart, dateEnd);
+        var query = new FindByIdAccountExtractQuery(accountId, dateStart.Ticks, dateEnd.Ticks);
         var account = await _mediator.Send(query);
         return Ok(account);
     }

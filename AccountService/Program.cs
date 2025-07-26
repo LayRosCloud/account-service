@@ -29,11 +29,15 @@ builder.Services.AddAutoMapper(config =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseSwagger();
-app.UseSwaggerUI(options =>
+
+if (app.Environment.IsDevelopment())
 {
-    options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui.min.css";
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui.min.css";
+    });
+}
 
 app.UseAuthorization();
 

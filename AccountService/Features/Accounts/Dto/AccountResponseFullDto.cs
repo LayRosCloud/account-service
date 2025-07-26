@@ -1,16 +1,35 @@
 ﻿using AccountService.Features.Transactions.Dto;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Accounts.Dto;
 
+[SwaggerSchema("Account response with transactions")]
 public class AccountResponseFullDto
 {
+    [SwaggerSchema("Account id")]
     public Guid Id { get; set; }
+
+    [SwaggerSchema("Owner id")]
     public Guid OwnerId { get; set; }
+
+    [SwaggerSchema("Type of account checking, credit, debit")]
     public AccountType Type { get; set; }
+
+    [SwaggerSchema("Currency of account RUB, EUR and others")]
     public string Currency { get; set; } = string.Empty;
+
+    [SwaggerSchema("Balance of account")]
     public decimal Balance { get; set; }
+
+    [SwaggerSchema("Percent of account")]
     public decimal? Percent { get; set; }
+
+    [SwaggerSchema("Created account in ticks")]
     public long CreatedAt { get; set; }
+
+    [SwaggerSchema("Closed account in ticks")]
     public long? ClosedAt { get; set; }
+
+    [SwaggerSchema("All transactions of account")]
     public List<TransactionFullDto> Transactions { get; set; } = new();
 }
