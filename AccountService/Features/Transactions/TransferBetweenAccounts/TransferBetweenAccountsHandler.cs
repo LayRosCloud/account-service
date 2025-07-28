@@ -35,8 +35,12 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
         CheckAccountConditions(accountFrom, accountTo);
 
         var transactionFrom = CreateTransaction(request, accountFrom);
-        CreateTransaction(request, accountTo,
+        var transactionTo = CreateTransaction(request, accountTo,
             transactionFrom.Type == TransactionType.Debit ? TransactionType.Credit : TransactionType.Debit);
+        transactionTo.AccountId = transactionFrom.CounterPartyAccountId!.Value;
+        transactionTo.CounterPartyAccountId = transactionFrom.AccountId;
+        AddTransactionToDatabase(transactionFrom, accountFrom);
+        AddTransactionToDatabase(transactionTo, accountTo);
         return Task.FromResult(_mapper.Map<TransactionFullDto>(transactionFrom));
     }
 
@@ -50,7 +54,6 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
         var proxyFrom = new PaymentProxy(transaction, account);
 
         proxyFrom.ExecuteTransaction();
-        AddTransactionToDatabase(transaction, account);
 
         return transaction;
     }
