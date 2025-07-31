@@ -10,14 +10,15 @@ namespace AccountService.Features.Accounts.CreateAccount;
 
 public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, AccountResponseShortDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public CreateAccountHandler(IMapper mapper, IMediator mediator)
+    public CreateAccountHandler(IMapper mapper, IMediator mediator, IDatabaseContext database)
     {
         _mapper = mapper;
         _mediator = mediator;
+        _database = database;
     }
 
     public Task<AccountResponseShortDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
@@ -30,7 +31,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, Accoun
         var account = _mapper.Map<Account>(request);
         account.Id = Guid.NewGuid();
         account.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
-        _databaseContext.Accounts.Add(account);
+        _database.Accounts.Add(account);
         return Task.FromResult(_mapper.Map<AccountResponseShortDto>(account));
     }
 }

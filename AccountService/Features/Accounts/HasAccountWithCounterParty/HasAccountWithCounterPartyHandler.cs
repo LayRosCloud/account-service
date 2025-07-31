@@ -5,11 +5,16 @@ namespace AccountService.Features.Accounts.HasAccountWithCounterParty;
 
 public class HasAccountWithCounterPartyHandler : IRequestHandler<HasAccountWithCounterPartyCommand, bool>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
+
+    public HasAccountWithCounterPartyHandler(IDatabaseContext database)
+    {
+        _database = database;
+    }
 
     public Task<bool> Handle(HasAccountWithCounterPartyCommand request, CancellationToken cancellationToken)
     {
-        var account = _databaseContext.Accounts.SingleOrDefault(acc =>
+        var account = _database.Accounts.SingleOrDefault(acc =>
             acc.Id == request.AccountId && acc.OwnerId == request.OwnerId);
         return Task.FromResult(account != null);
     }

@@ -11,17 +11,18 @@ namespace AccountService.Features.Accounts.FindByIdAccountExtract;
 
 public class FindByIdAccountExtractHandler : IRequestHandler<FindByIdAccountExtractQuery, AccountResponseFullDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
 
-    public FindByIdAccountExtractHandler(IMapper mapper)
+    public FindByIdAccountExtractHandler(IMapper mapper, IDatabaseContext database)
     {
         _mapper = mapper;
+        _database = database;
     }
 
     public Task<AccountResponseFullDto> Handle(FindByIdAccountExtractQuery request, CancellationToken cancellationToken)
     {
-        var account = _databaseContext.Accounts.FirstOrDefault(acc => acc.Id == request.AccountId);
+        var account = _database.Accounts.FirstOrDefault(acc => acc.Id == request.AccountId);
         if (account == null) throw ExceptionUtils.GetNotFoundException("Account", request.AccountId);
 
         var balanceBefore = account.Transactions.Where(x => x.CreatedAt < request.DateStart).Sum(x => x.Sum);

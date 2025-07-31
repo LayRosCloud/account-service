@@ -24,10 +24,12 @@ public class UpdateTypeAccountHandler : IRequestHandler<UpdateTypeAccountCommand
         if (account.Type != AccountType.Checking && request.Type != AccountType.Checking)
             throw new ValidationException("You cannot change not Checking type");
 
+        // ReSharper disable once ConvertIfStatementToSwitchStatement the solution becomes less readable.
         if (request.Type == AccountType.Deposit && account.Balance < 0)
             throw new ValidationException("You don't change to Deposit type with negative balance");
         if (request.Type == AccountType.Credit && account.Percent == null)
             throw new ValidationException("You don't change to Credit type without percent");
+        
         account.Type = request.Type;
         return Task.FromResult(_mapper.Map<AccountResponseShortDto>(account));
     }

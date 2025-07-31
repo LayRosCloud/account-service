@@ -1,22 +1,37 @@
-﻿using AccountService.Features.Accounts.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+using AccountService.Features.Accounts.Dto;
 using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Accounts.CreateAccount;
 
-[SwaggerSchema(Description = "Data transfer object for create account",
-    Required = new[] { "ownerId", "type", "currency", "balance" })]
 public class CreateAccountCommand : IRequest<AccountResponseShortDto>
 {
-    [SwaggerSchema("counterparty id")] public Guid OwnerId { get; set; }
+    /// <summary>
+    /// Counterparty id
+    /// </summary>]
+    [Required]
+    public Guid OwnerId { get; set; }
 
-    [SwaggerSchema("account type: 1: Checking, 2: PerformOperation, 3: Credit")]
+    /// <summary>
+    /// account type: 1: Checking, 2: PerformOperation, 3: Credit
+    /// </summary>
+    [Required]
     public AccountType Type { get; set; }
 
-    [SwaggerSchema("currency code")] public string Currency { get; set; } = string.Empty;
+    /// <summary>
+    /// Code Currency
+    /// </summary>
+    [Required]
+    public string Currency { get; set; } = string.Empty;
 
-    [SwaggerSchema("balance account")] public decimal Balance { get; set; }
-
-    [SwaggerSchema("percent for credit account or invest")]
+    /// <summary>
+    /// balance account
+    /// </summary>
+    [Required]
+    public decimal Balance { get; set; }
+    
+    /// <summary>
+    /// percent for credit account or invest
+    /// </summary>
     public decimal? Percent { get; set; }
 }

@@ -7,11 +7,16 @@ namespace AccountService.Features.Accounts.DeleteAccount;
 
 public class DeleteAccountHandler : IRequestHandler<DeleteAccountCommand, Unit>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
+
+    public DeleteAccountHandler(IDatabaseContext database)
+    {
+        _database = database;
+    }
 
     public Task<Unit> Handle(DeleteAccountCommand request, CancellationToken cancellationToken)
     {
-        var account = _databaseContext.Accounts.FirstOrDefault(x => x.Id == request.AccountId);
+        var account = _database.Accounts.FirstOrDefault(x => x.Id == request.AccountId);
 
         if (account == null)
             throw ExceptionUtils.GetNotFoundException("Account", request.AccountId);

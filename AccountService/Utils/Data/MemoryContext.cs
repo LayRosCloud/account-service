@@ -3,15 +3,8 @@ using AccountService.Features.Transactions;
 
 namespace AccountService.Utils.Data;
 
-public sealed class DatabaseContext
+public sealed class MemoryContext : IDatabaseContext
 {
-    static DatabaseContext()
-    {
-        Instance = new DatabaseContext();
-    }
-
-    public static DatabaseContext Instance { get; }
-
     public List<Account> Accounts { get; } = new();
     public List<Transaction> Transactions { get; } = new();
 

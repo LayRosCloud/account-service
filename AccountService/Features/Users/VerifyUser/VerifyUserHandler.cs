@@ -5,7 +5,12 @@ namespace AccountService.Features.Users.VerifyUser;
 
 public class VerifyUserHandler : IRequestHandler<VerifyUserCommand, bool>
 {
-    private readonly DatabaseContext _database = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
+
+    public VerifyUserHandler(IDatabaseContext database)
+    {
+        _database = database;
+    }
 
     public Task<bool> Handle(VerifyUserCommand request, CancellationToken cancellationToken)
     {

@@ -9,12 +9,13 @@ namespace AccountService.Features.Transactions.FindByAccountIdTransactions;
 public class
     FindByAccountIdTransactionsHandler : IRequestHandler<FindByAccountIdTransactionsQuery, List<TransactionFullDto>>
 {
-    private readonly DatabaseContext _database = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
 
-    public FindByAccountIdTransactionsHandler(IMapper mapper)
+    public FindByAccountIdTransactionsHandler(IMapper mapper, IDatabaseContext database)
     {
         _mapper = mapper;
+        _database = database;
     }
 
     public Task<List<TransactionFullDto>> Handle(FindByAccountIdTransactionsQuery request,

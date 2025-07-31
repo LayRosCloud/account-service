@@ -13,14 +13,15 @@ namespace AccountService.Features.Transactions.TransferBetweenAccounts;
 
 public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAccountsCommand, TransactionFullDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IDatabaseContext database)
     {
         _mapper = mapper;
         _mediator = mediator;
+        _database = database;
     }
 
     public Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
@@ -61,7 +62,7 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
     private void AddTransactionToDatabase(Transaction transaction, Account account)
     {
         account.Transactions.Add(transaction);
-        _databaseContext.Transactions.Add(transaction);
+        _database.Transactions.Add(transaction);
     }
 
     private static void CheckAccountConditions(Account accountFrom, Account accountTo)

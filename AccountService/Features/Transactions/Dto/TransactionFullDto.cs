@@ -1,28 +1,44 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
+﻿namespace AccountService.Features.Transactions.Dto;
 
-namespace AccountService.Features.Transactions.Dto;
-
-[SwaggerSchema("Transaction of account with balance")]
 public class TransactionFullDto
 {
-    [SwaggerSchema("id")] public Guid Id { get; set; }
+    /// <summary>
+    /// transaction id
+    /// </summary>
+    public Guid Id { get; set; }
 
-    [SwaggerSchema("account id")] public Guid AccountId { get; set; }
+    /// <summary>
+    /// account id
+    /// </summary>
+    public Guid AccountId { get; set; }
 
-    [SwaggerSchema("counterparty account id")]
+    /// <summary>
+    /// CounterParty account id
+    /// </summary>
     public Guid? CounterPartyAccountId { get; set; }
 
-    [SwaggerSchema("amount")] public decimal Sum { get; set; }
+    /// <summary>
+    /// amount
+    /// </summary>
+    public decimal Sum { get; set; }
 
-    [SwaggerSchema("currency of transaction")]
+    /// <summary>
+    /// currency of transaction
+    /// </summary>
     public string Currency { get; set; } = string.Empty;
 
-    [SwaggerSchema("type transaction Debit | Credit")]
+    /// <summary>
+    /// type transaction Debit | Credit
+    /// </summary>
     public TransactionType Type { get; set; }
 
-    [SwaggerSchema("Description of transaction")]
+    /// <summary>
+    /// Description of transaction
+    /// </summary>
     public string Description { get; set; } = string.Empty;
 
-    [SwaggerSchema("Created of transaction in ticks")]
-    public long CreatedAt { get; set; }
+    /// <summary>
+    /// Created of transaction in ticks
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; set; }
 }

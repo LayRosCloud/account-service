@@ -9,18 +9,19 @@ namespace AccountService.Features.Accounts.UpdatePercentAccount;
 
 public class UpdateAccountPercentHandler : IRequestHandler<UpdateAccountPercentCommand, AccountResponseShortDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
 
-    public UpdateAccountPercentHandler(IMapper mapper)
+    public UpdateAccountPercentHandler(IMapper mapper, IDatabaseContext database)
     {
+        _database = database;
         _mapper = mapper;
     }
 
     public Task<AccountResponseShortDto> Handle(UpdateAccountPercentCommand request,
         CancellationToken cancellationToken)
     {
-        var account = _databaseContext.Accounts.FirstOrDefault(acc => acc.Id == request.Id);
+        var account = _database.Accounts.FirstOrDefault(acc => acc.Id == request.Id);
 
         if (account == null)
             throw ExceptionUtils.GetNotFoundException("Account", request.Id);

@@ -1,23 +1,38 @@
-﻿using AccountService.Features.Transactions.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+using AccountService.Features.Transactions.Dto;
 using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Transactions.TransferBetweenAccounts;
 
-[SwaggerSchema(Description = "Data transfer object for create transfer transaction",
-    Required = new[] { "sum", "description" })]
 public class TransferBetweenAccountsCommand : IRequest<TransactionFullDto>
 {
-    [SwaggerSchema("from account id")] public Guid AccountId { get; set; }
+    /// <summary>
+    /// From Account id
+    /// </summary>
+    [Required] 
+    public Guid AccountId { get; set; }
 
-    [SwaggerSchema("to account id")] public Guid CounterPartyAccountId { get; set; }
+    /// <summary>
+    /// To Account id
+    /// </summary>
+    [Required]
+    public Guid CounterPartyAccountId { get; set; }
 
-    [SwaggerSchema("amount of transaction")]
+    /// <summary>
+    /// Amount
+    /// </summary>
+    [Required]
     public decimal Sum { get; set; }
 
-    [SwaggerSchema("type of transaction", WriteOnly = true, ReadOnly = true)]
+    /// <summary>
+    /// Type transaction
+    /// </summary>
+    [Required]
     public TransactionType Type { get; set; }
 
-    [SwaggerSchema("description transaction")]
+    /// <summary>
+    /// Description of transaction
+    /// </summary>
+    [Required]
     public string Description { get; set; } = string.Empty;
 }

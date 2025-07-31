@@ -1,43 +1,62 @@
 using System.Reflection;
 using AccountService.Features.Accounts;
 using AccountService.Features.Transactions;
+using AccountService.Utils.Data;
 using AccountService.Utils.Middleware;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+const string corsPolicy = "LocalOrigins";
 
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(options =>
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+services.AddControllers();
+services.AddCors(options => 
+    options.AddPolicy(corsPolicy, policyOptions =>
+    {
+        policyOptions.SetIsOriginAllowed(domain => domain.StartsWith("http://localhost"))
+            .WithMethods("GET", "POST", "PATCH", "DELETE")
+            .WithHeaders("Authorization", "Content-Type", "Accept")
+            .AllowCredentials()
+            .SetPreflightMaxAge(TimeSpan.FromHours(1))
+            .Build();
+    })
+);
+
+services.AddSingleton<IDatabaseContext, MemoryContext>();
+services.AddSwaggerGen(options =>
 {
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Account service", Version = "v1" });
-    options.EnableAnnotations();
 });
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-builder.Services.AddMediatR(options =>
+
+services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+services.AddMediatR(options =>
 {
     options.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
     options.AddOpenBehavior(typeof(ValidatorBehaviour<,>));
 });
 
-builder.Services.AddAutoMapper(config =>
+services.AddAutoMapper(config =>
 {
-    config.AddProfile(typeof(AccountMapper));
-    config.AddProfile(typeof(TransactionMapper));
+    config.AddProfile<AccountMapper>();
+    config.AddProfile<TransactionMapper>();
 });
 
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+app.UseCors(corsPolicy);
+app.UseStaticFiles();
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui.min.css";
-    });
-}
+    options.InjectStylesheet("swagger.css");
+});
 
 app.UseAuthorization();
 

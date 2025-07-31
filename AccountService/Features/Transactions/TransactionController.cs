@@ -2,16 +2,15 @@
 using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.FindByAccountIdTransactions;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
-using AccountService.Utils.Middleware;
+using AccountService.Utils.Result;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Transactions;
 
 [ApiController]
 [Route("/transactions")]
-[SwaggerTag("transactions of accounts")]
+[Produces("application/json")]
 public class TransactionController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,57 +20,66 @@ public class TransactionController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Finds transactions
+    /// </summary>
+    /// <remarks>
+    /// Finds transactions by account id
+    /// </remarks>
+    /// <param name="accountId">account id</param>
+    /// <response code="200">The transaction was finds</response>
+    /// <response code="400">Object data is invalid</response>
+    /// <response code="404">Object is not found</response>
     [HttpGet("/accounts/{accountId}/transactions")]
-    [SwaggerOperation(
-        Summary = "Finds transactions",
-        Description = "Finds transactions by account id",
-        OperationId = "FindByAccountId",
-        Tags = new[] { "Transaction" }
-    )]
-    [SwaggerResponse(200, "The transaction was created", typeof(TransactionFullDto))]
-    [SwaggerResponse(400, "Object data is invalid", typeof(ExceptionDto))]
-    [SwaggerResponse(404, "Object is not found", typeof(ExceptionDto))]
+    [ProducesResponseType(typeof(MbResponse<List<TransactionFullDto>>), 200)]
+    [ProducesResponseType(typeof(MbError), 400)]
+    [ProducesResponseType(typeof(MbError), 404)]
     public async Task<IActionResult> FindByAccountId(Guid accountId)
     {
         var command = new FindByAccountIdTransactionsQuery(accountId);
-        var transaction = await _mediator.Send(command);
-        return Ok(transaction);
+        var transactions = await _mediator.Send(command);
+        var result = ResultGenerator.Ok(transactions);
+        return Ok(result);
     }
 
+    /// <summary>
+    /// Create transaction
+    /// </summary>
+    /// <remarks>
+    /// Create transaction
+    /// </remarks>
+    /// <response code="201">The transaction was created</response>
+    /// <response code="400">Object data is invalid</response>
+    /// <response code="404">Object is not found</response>
     [HttpPost]
-    [SwaggerOperation(
-        Summary = "Creates a new transaction",
-        Description = "Creates a transaction for a specific account for a specific amount",
-        OperationId = "CreateTransaction",
-        Tags = new[] { "Transaction" }
-    )]
-    [SwaggerResponse(200, "The transaction was created", typeof(TransactionFullDto))]
-    [SwaggerResponse(400, "Object data is invalid", typeof(ExceptionDto))]
-    [SwaggerResponse(404, "Object is not found", typeof(ExceptionDto))]
-    public async Task<IActionResult> CreateTransaction(
-        [FromBody] [SwaggerRequestBody("body for create transaction", Required = true)]
-        CreateTransactionCommand command)
+    [ProducesResponseType(typeof(MbResponse<TransactionFullDto>), 201)]
+    [ProducesResponseType(typeof(MbError), 400)]
+    [ProducesResponseType(typeof(MbError), 404)]
+    public async Task<IActionResult> CreateTransaction([FromBody] CreateTransactionCommand command)
     {
         var transaction = await _mediator.Send(command);
-        return Ok(transaction);
+        var result = ResultGenerator.Create(transaction);
+        return new ObjectResult(result) { StatusCode = 201 };
     }
 
+    /// <summary>
+    /// Creates a new transfer transaction
+    /// </summary>
+    /// <remarks>
+    /// Creates a transfer transaction for a specific accounts for a specific amount
+    /// </remarks>
+    /// <response code="201">The transfer transaction  was created</response>
+    /// <response code="400">Object data is invalid</response>
+    /// <response code="404">Object is not found</response>
     [HttpPost("transfer")]
-    [SwaggerOperation(
-        Summary = "Creates a new transfer transaction",
-        Description = "Creates a transfer transaction for a specific accounts for a specific amount",
-        OperationId = "CreateTransferTransaction",
-        Tags = new[] { "Transaction" }
-    )]
-    [SwaggerResponse(200, "The transfer transaction  was created", typeof(TransactionFullDto))]
-    [SwaggerResponse(400, "Object data is invalid", typeof(ExceptionDto))]
-    [SwaggerResponse(404, "Object is not found", typeof(ExceptionDto))]
-    public async Task<IActionResult> TransferBetweenAccounts(
-        [FromBody] [SwaggerRequestBody("body for create transfer transaction", Required = true)]
-        TransferBetweenAccountsCommand command)
+    [ProducesResponseType(typeof(MbResponse<TransactionFullDto>), 201)]
+    [ProducesResponseType(typeof(MbError), 400)]
+    [ProducesResponseType(typeof(MbError), 404)]
+    public async Task<IActionResult> TransferBetweenAccounts([FromBody] TransferBetweenAccountsCommand command)
     {
         command.Type = TransactionType.Credit;
         var transaction = await _mediator.Send(command);
-        return Ok(transaction);
+        var result = ResultGenerator.Create(transaction);
+        return new ObjectResult(result) { StatusCode = 201 };
     }
 }

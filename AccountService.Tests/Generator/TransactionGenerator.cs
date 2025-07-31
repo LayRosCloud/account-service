@@ -21,7 +21,7 @@ public class TransactionGenerator
             Currency = account.Currency,
             Sum = (decimal)(random.NextDouble() * 10000),
             Type = TransactionType.Debit,
-            Description = "Частичное снятие",
+            Description = "partial withdrawal",
             CounterPartyAccountId = null
         };
         account.Transactions.Add(transaction);
@@ -37,7 +37,7 @@ public class TransactionGenerator
             AccountId = account.Id,
             Sum = (decimal)(random.NextDouble() * 10000),
             Type = TransactionType.Debit,
-            Description = "Частичное снятие"
+            Description = "partial withdrawal"
         };
     }
 
@@ -50,7 +50,7 @@ public class TransactionGenerator
             AccountId = accountFrom.Id,
             CounterPartyAccountId = accountTo.Id,
             Sum = (decimal)(random.NextDouble() * 10000),
-            Description = "Частичное снятие"
+            Description = "partial withdrawal"
         };
     }
 
@@ -66,7 +66,7 @@ public class TransactionGenerator
             Currency = account.Currency,
             Sum = (decimal)(random.NextDouble() * 10000),
             Type = TransactionType.Debit,
-            Description = "Частичное снятие",
+            Description = "partial withdrawal",
             CounterPartyAccountId = null
         };
     }

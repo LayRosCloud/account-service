@@ -11,17 +11,18 @@ namespace AccountService.Features.Transactions.CreateTransaction;
 
 public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand, TransactionFullDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
 
-    public CreateTransactionHandler(IMapper mapper)
+    public CreateTransactionHandler(IMapper mapper, IDatabaseContext database)
     {
         _mapper = mapper;
+        _database = database;
     }
 
     public Task<TransactionFullDto> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
     {
-        var account = _databaseContext.Accounts.SingleOrDefault(acc => acc.Id == request.AccountId);
+        var account = _database.Accounts.SingleOrDefault(acc => acc.Id == request.AccountId);
 
         if (account == null)
             throw ExceptionUtils.GetNotFoundException("Account", request.AccountId);
@@ -32,7 +33,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
         proxy.ExecuteTransaction();
 
         account.Transactions.Add(transaction);
-        _databaseContext.Transactions.Add(transaction);
+        _database.Transactions.Add(transaction);
         return Task.FromResult(_mapper.Map<TransactionFullDto>(transaction));
     }
 

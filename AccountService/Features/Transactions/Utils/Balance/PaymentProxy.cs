@@ -7,13 +7,13 @@ public class PaymentProxy
     private readonly decimal _amount;
     private readonly IBalance _balance;
 
-    public PaymentProxy(Transaction transaction, Account accountFrom)
+    public PaymentProxy(Transaction transaction, Account account)
     {
-        if (transaction == null || accountFrom == null)
+        if (transaction == null || account == null)
             throw new NullReferenceException("Transaction or Account is null");
 
         var factory = new BalanceFactory();
-        _balance = factory.GetBalance(accountFrom, transaction.Type);
+        _balance = factory.GetBalance(account, transaction.Type);
 
         _amount = transaction.Sum;
     }

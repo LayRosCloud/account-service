@@ -9,5 +9,5 @@ public class Transaction
     public string Currency { get; set; } = string.Empty;
     public TransactionType Type { get; set; }
     public string Description { get; set; } = string.Empty;
-    public long CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }
