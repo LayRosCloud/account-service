@@ -55,7 +55,8 @@ app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.InjectStylesheet("swagger.css");
+    const string path = "/swagger-ui/swagger.css";
+    options.InjectStylesheet(path);
 });
 
 app.UseAuthorization();
