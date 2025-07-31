@@ -19,6 +19,7 @@ public class ExceptionMiddleware
         _next = next;
     }
 
+    // ReSharper disable once UnusedMember.Global using ASP.NET middleware before request
     public async Task InvokeAsync(HttpContext context)
     {
         try

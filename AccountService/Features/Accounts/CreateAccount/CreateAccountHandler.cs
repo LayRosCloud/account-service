@@ -8,6 +8,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.CreateAccount;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, AccountResponseShortDto>
 {
     private readonly IDatabaseContext _database;

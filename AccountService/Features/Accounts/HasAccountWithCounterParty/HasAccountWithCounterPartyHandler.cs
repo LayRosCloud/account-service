@@ -3,6 +3,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.HasAccountWithCounterParty;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class HasAccountWithCounterPartyHandler : IRequestHandler<HasAccountWithCounterPartyCommand, bool>
 {
     private readonly IDatabaseContext _database;

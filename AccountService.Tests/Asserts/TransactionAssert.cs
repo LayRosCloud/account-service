@@ -3,7 +3,7 @@ using AccountService.Features.Transactions.CreateTransaction;
 using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
 
-namespace AccountService.Tests.Utils;
+namespace AccountService.Tests.Asserts;
 
 public class TransactionAssert
 {

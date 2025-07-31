@@ -9,6 +9,7 @@ using MediatR;
 
 namespace AccountService.Features.Transactions.CreateTransaction;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand, TransactionFullDto>
 {
     private readonly IDatabaseContext _database;
@@ -29,7 +30,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
 
         var transaction = _mapper.Map<Transaction>(request);
         SetDefaultSettingTransaction(account, transaction);
-        var proxy = new PaymentProxy(transaction, account);
+        var proxy = new PaymentBalance(transaction, account);
         proxy.ExecuteTransaction();
 
         account.Transactions.Add(transaction);

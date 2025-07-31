@@ -2,6 +2,7 @@
 
 namespace AccountService.Features.Accounts.UpdatePercentAccount;
 
+// ReSharper disable once UnusedMember.Global using Validator Behaviour
 public class UpdateAccountPercentValidator : AbstractValidator<UpdateAccountPercentCommand>
 {
     public UpdateAccountPercentValidator()

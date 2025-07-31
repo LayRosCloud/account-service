@@ -11,6 +11,7 @@ using MediatR;
 
 namespace AccountService.Features.Transactions.TransferBetweenAccounts;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAccountsCommand, TransactionFullDto>
 {
     private readonly IDatabaseContext _database;
@@ -52,7 +53,7 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
         if (type != null)
             transaction.Type = type.Value;
         SetDefaultSettingsTransaction(transaction, account);
-        var proxyFrom = new PaymentProxy(transaction, account);
+        var proxyFrom = new PaymentBalance(transaction, account);
 
         proxyFrom.ExecuteTransaction();
 

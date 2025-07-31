@@ -9,6 +9,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.FindByIdAccountExtract;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class FindByIdAccountExtractHandler : IRequestHandler<FindByIdAccountExtractQuery, AccountResponseFullDto>
 {
     private readonly IDatabaseContext _database;
@@ -36,7 +37,7 @@ public class FindByIdAccountExtractHandler : IRequestHandler<FindByIdAccountExtr
             if (request.DateStart <= transaction.CreatedAt && transaction.CreatedAt <= request.DateEnd)
             {
                 var trans = _mapper.Map<Transaction>(transaction);
-                var proxy = new PaymentProxy(trans, clone);
+                var proxy = new PaymentBalance(trans, clone);
                 proxy.ExecuteTransaction();
                 transactions.AddLast(transaction);
             }

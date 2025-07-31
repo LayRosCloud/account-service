@@ -3,6 +3,7 @@ using MediatR;
 
 namespace AccountService.Features.Users.VerifyUser;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class VerifyUserHandler : IRequestHandler<VerifyUserCommand, bool>
 {
     private readonly IDatabaseContext _database;

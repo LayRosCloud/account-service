@@ -11,6 +11,8 @@ public class DepositBalance : IBalance
 
     public DepositBalance(Account account, TransactionType type)
     {
+        if (account.Type != AccountType.Deposit)
+            throw new ValidationException("Error! Invalid account type for Deposit balance");
         _account = account;
         _type = type;
     }

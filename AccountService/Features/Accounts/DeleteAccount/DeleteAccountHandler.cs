@@ -5,6 +5,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.DeleteAccount;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class DeleteAccountHandler : IRequestHandler<DeleteAccountCommand, Unit>
 {
     private readonly IDatabaseContext _database;

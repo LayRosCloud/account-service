@@ -7,6 +7,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.UpdatePercentAccount;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class UpdateAccountPercentHandler : IRequestHandler<UpdateAccountPercentCommand, AccountResponseShortDto>
 {
     private readonly IDatabaseContext _database;

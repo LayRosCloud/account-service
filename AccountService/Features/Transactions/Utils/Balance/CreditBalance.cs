@@ -11,6 +11,8 @@ public class CreditBalance : IBalance
 
     public CreditBalance(Account account, TransactionType type)
     {
+        if (account.Type != AccountType.Credit)
+            throw new ValidationException("Error! Invalid type for credit balance");
         _account = account;
         _type = type;
     }

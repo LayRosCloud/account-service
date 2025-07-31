@@ -4,6 +4,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.FindByIdAccount.Internal;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class FindByIdAccountInternalHandler : IRequestHandler<FindByIdAccountInternalQuery, Account>
 {
     private readonly IDatabaseContext _database;

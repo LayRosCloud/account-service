@@ -1,13 +1,12 @@
-using System.Reflection;
 using AccountService.Features.Accounts;
 using AccountService.Features.Transactions;
 using AccountService.Utils.Data;
 using AccountService.Utils.Middleware;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 const string corsPolicy = "LocalOrigins";
-
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 services.AddControllers();
@@ -64,3 +63,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

@@ -6,8 +6,9 @@ using MediatR;
 
 namespace AccountService.Features.Transactions.FindByAccountIdTransactions;
 
-public class
-    FindByAccountIdTransactionsHandler : IRequestHandler<FindByAccountIdTransactionsQuery, List<TransactionFullDto>>
+// ReSharper disable once UnusedMember.Global using Mediator
+public class FindByAccountIdTransactionsHandler :
+    IRequestHandler<FindByAccountIdTransactionsQuery, List<TransactionFullDto>>
 {
     private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;

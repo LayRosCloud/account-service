@@ -7,7 +7,7 @@ namespace AccountService.Features.Accounts.CreateAccount;
 public class CreateAccountCommand : IRequest<AccountResponseShortDto>
 {
     /// <summary>
-    /// Counterparty id
+    /// CounterParty id
     /// </summary>]
     [Required]
     public Guid OwnerId { get; set; }

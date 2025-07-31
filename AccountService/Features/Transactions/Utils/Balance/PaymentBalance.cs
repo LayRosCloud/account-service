@@ -2,18 +2,18 @@
 
 namespace AccountService.Features.Transactions.Utils.Balance;
 
-public class PaymentProxy
+public class PaymentBalance
 {
     private readonly decimal _amount;
     private readonly IBalance _balance;
 
-    public PaymentProxy(Transaction transaction, Account account)
+    public PaymentBalance(Transaction transaction, Account account)
     {
         if (transaction == null || account == null)
             throw new NullReferenceException("Transaction or Account is null");
 
         var factory = new BalanceFactory();
-        _balance = factory.GetBalance(account, transaction.Type);
+        _balance = factory.GetBalanceHandler(account, transaction.Type);
 
         _amount = transaction.Sum;
     }

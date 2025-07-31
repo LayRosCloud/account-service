@@ -6,6 +6,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.UpdateTypeAccount;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class UpdateTypeAccountHandler : IRequestHandler<UpdateTypeAccountCommand, AccountResponseShortDto>
 {
     private readonly IMapper _mapper;
