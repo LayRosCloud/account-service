@@ -2,6 +2,7 @@
 using AccountService.Features.Currencies.VerifyCurrency;
 using AccountService.Utils.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountService.Features.Currencies;
@@ -24,8 +25,10 @@ public class CurrencyController : ControllerBase
     /// <remarks>
     /// Find all currency
     /// </remarks>
+    /// <response code="401">Unauthorized</response>
     /// <response code="200">The currency finds</response>
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<List<string>>), 200)]
     public async Task<IActionResult> FindAllUsers()
     {
@@ -42,7 +45,9 @@ public class CurrencyController : ControllerBase
     /// Check currency by code
     /// </remarks>
     /// <response code="200">exist currency</response>
+    /// <response code="401">Unauthorized</response>
     [HttpPost("{code}/verify")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<bool>), 200)]
     public async Task<IActionResult> Verify(string code)
     {

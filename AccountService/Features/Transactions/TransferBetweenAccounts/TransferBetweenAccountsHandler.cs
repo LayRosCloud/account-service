@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using AccountService.Features.Accounts;
+﻿using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AccountService.Features.Transactions.Dto;
-using AccountService.Features.Transactions.Utils.Balance;
+using AccountService.Features.Transactions.Utils.Transfer;
 using AccountService.Utils.Data;
-using AccountService.Utils.Exceptions;
-using AccountService.Utils.Time;
 using AutoMapper;
 using MediatR;
 
@@ -17,71 +14,42 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
     private readonly IDatabaseContext _database;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly ITransferFactory _factory;
 
-    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IDatabaseContext database)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IDatabaseContext database, ITransferFactory factory)
     {
         _mapper = mapper;
         _mediator = mediator;
         _database = database;
+        _factory = factory;
     }
 
-    public Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
+    public async Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
     {
-        var accountFrom = FindByIdAccount(request.AccountId);
-        var accountTo = FindByIdAccount(request.CounterPartyAccountId);
+        var (accountFrom, accountTo) = await FindByIds(request.AccountId, request.CounterPartyAccountId);
+        var transferHandler = _factory.GetTransfer(accountFrom, accountTo, request);
 
-        if (accountFrom == null || accountTo == null)
-            throw ExceptionUtils.GetNotFoundException("Accounts",
-                $"{request.AccountId} {request.CounterPartyAccountId}");
+        transferHandler.Validate();
 
-        CheckAccountConditions(accountFrom, accountTo);
+        transferHandler.CreateTransactionForAccountFrom(_mapper.Map<Transaction>(request));
+        transferHandler.CreateTransactionForAccountTo(_mapper.Map<Transaction>(request));
 
-        var transactionFrom = CreateTransaction(request, accountFrom);
-        var transactionTo = CreateTransaction(request, accountTo,
-            transactionFrom.Type == TransactionType.Debit ? TransactionType.Credit : TransactionType.Debit);
-        transactionTo.AccountId = transactionFrom.CounterPartyAccountId!.Value;
-        transactionTo.CounterPartyAccountId = transactionFrom.AccountId;
-        AddTransactionToDatabase(transactionFrom, accountFrom);
-        AddTransactionToDatabase(transactionTo, accountTo);
-        return Task.FromResult(_mapper.Map<TransactionFullDto>(transactionFrom));
+        transferHandler.SwapTransactionsIds();
+
+        var (transactionFrom, _) = transferHandler.SaveToDatabase(_database);
+        return _mapper.Map<TransactionFullDto>(transactionFrom);
     }
 
-    private Transaction CreateTransaction(TransferBetweenAccountsCommand request, Account account,
-        TransactionType? type = null)
+    private async Task<(Account, Account)> FindByIds(Guid id1, Guid id2)
     {
-        var transaction = _mapper.Map<Transaction>(request);
-        if (type != null)
-            transaction.Type = type.Value;
-        SetDefaultSettingsTransaction(transaction, account);
-        var proxyFrom = new PaymentBalance(transaction, account);
-
-        proxyFrom.ExecuteTransaction();
-
-        return transaction;
+        var account1 = await FindByIdAccount(id1);
+        var account2 = await FindByIdAccount(id2);
+        return (account1, account2);
     }
 
-    private void AddTransactionToDatabase(Transaction transaction, Account account)
-    {
-        account.Transactions.Add(transaction);
-        _database.Transactions.Add(transaction);
-    }
-
-    private static void CheckAccountConditions(Account accountFrom, Account accountTo)
-    {
-        if (!accountFrom.Currency.Equals(accountTo.Currency))
-            throw new ValidationException("Currency accounts is different");
-    }
-
-    private Account FindByIdAccount(Guid id)
+    private async Task<Account> FindByIdAccount(Guid id)
     {
         var query = new FindByIdAccountInternalQuery(id);
-        return _mapper.Map<Account>(_mediator.Send(query).Result);
-    }
-
-    private static void SetDefaultSettingsTransaction(Transaction transaction, Account account)
-    {
-        transaction.Currency = account.Currency;
-        transaction.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
-        transaction.Id = Guid.NewGuid();
+        return _mapper.Map<Account>(await _mediator.Send(query));
     }
 }

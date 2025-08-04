@@ -1,15 +1,22 @@
 using AccountService.Features.Accounts;
 using AccountService.Features.Transactions;
+using AccountService.Features.Transactions.Utils.Transfer;
+using AccountService.Features.Users.Utils;
 using AccountService.Utils.Data;
+using AccountService.Utils.Extensions;
 using AccountService.Utils.Middleware;
 using FluentValidation;
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 const string corsPolicy = "LocalOrigins";
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 services.AddControllers();
+services.AddHttpContextAccessor();
+services.AddTransient<ITransferFactory, TransferFactory>();
+
 services.AddCors(options => 
     options.AddPolicy(corsPolicy, policyOptions =>
     {
@@ -21,16 +28,26 @@ services.AddCors(options =>
             .Build();
     })
 );
-
-services.AddSingleton<IDatabaseContext, MemoryContext>();
-services.AddSwaggerGen(options =>
-{
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    options.IncludeXmlComments(xmlPath);
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Account service", Version = "v1" });
+services.AddLogging(loggingBuilder => {
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
 });
-
+services.AddSingleton<IDatabaseContext, MemoryContext>();
+services.AddScoped<IKeyCloakClient, KeyCloakClient>();
+services.AddSwaggerGenAuthorization(builder.Configuration);
+services.AddAuthorization();
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.Audience = builder.Configuration["Authorization:Audience"];
+        options.MetadataAddress = builder.Configuration["Authorization:MetadataAddress"]!;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["Authorization:ValidIssuer"]
+        };
+    });
+services.AddMemoryCache();
 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 services.AddMediatR(options =>
 {
@@ -58,10 +75,10 @@ app.UseSwaggerUI(options =>
     options.InjectStylesheet(path);
 });
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-
-public partial class Program { }

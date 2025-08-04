@@ -7,5 +7,4 @@ public interface IDatabaseContext
 {
     public List<Account> Accounts { get; }
     public List<Transaction> Transactions { get; }
-    public List<Guid> CounterParties { get; }
 }

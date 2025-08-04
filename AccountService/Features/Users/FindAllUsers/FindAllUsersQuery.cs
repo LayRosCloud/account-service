@@ -2,6 +2,6 @@
 
 namespace AccountService.Features.Users.FindAllUsers;
 
-public class FindAllUsersQuery : IRequest<List<Guid>>
+public class FindAllUsersQuery : IRequest<IEnumerable<User>?>
 {
 }

@@ -1,0 +1,22 @@
+name: Account service tests
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v4
+        - name: Set up .NET
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: "9.0.x"
+        - name: Restore depends
+          run: dotnet restore
+        - name: Build
+          run: dotner build --configuration Release --no-restore
+        - name: Tests
+          run: dotnet test --configuration Release --no-build --verbosity normal

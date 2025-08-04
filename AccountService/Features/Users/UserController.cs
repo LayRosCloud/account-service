@@ -2,6 +2,7 @@
 using AccountService.Features.Users.VerifyUser;
 using AccountService.Utils.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountService.Features.Users;
@@ -25,8 +26,10 @@ public class UserController : ControllerBase
     /// Find all ids users
     /// </remarks>
     /// <response code="200">The users find all</response>
+    /// <response code="401">Unauthorized</response>
     [HttpGet]
-    [ProducesResponseType(typeof(MbResponse<List<Guid>>), 200)]
+    [Authorize]
+    [ProducesResponseType(typeof(MbResponse<List<User>>), 200)]
     public async Task<IActionResult> FindAllUsers()
     {
         var command = new FindAllUsersQuery();
@@ -42,7 +45,9 @@ public class UserController : ControllerBase
     /// Check user by id
     /// </remarks>
     /// <response code="200">The user verify</response>
+    /// <response code="401">Unauthorized</response>
     [HttpPost("{accountId}/verify")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<bool>), 200)]
     public async Task<IActionResult> Verify(Guid accountId)
     {

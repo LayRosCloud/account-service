@@ -9,6 +9,7 @@ using AccountService.Features.Accounts.UpdatePercentAccount;
 using AccountService.Features.Accounts.UpdateTypeAccount;
 using AccountService.Utils.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -33,7 +34,9 @@ public class AccountController : ControllerBase
     /// finds all accounts without transactions
     /// </remarks>
     /// <response code="200">returns a list of accounts</response>
+    /// <response code="401">Unauthorized</response>
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<List<AccountResponseShortDto>>), 200)]
     public async Task<IActionResult> FindAllAccounts()
     {
@@ -50,7 +53,9 @@ public class AccountController : ControllerBase
     /// if the account and the account holder exist in combination - true, else - false
     /// </remarks>
     /// <response code="200">does this user have an account?</response>
+    /// <response code="401">Unauthorized</response>
     [HttpGet("{accountId}/users/{userId}")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<bool>), 200)]
     public async Task<IActionResult> HasAccountWithCounterPartyId(
         [SwaggerParameter("account id", Required = true)]
@@ -68,49 +73,37 @@ public class AccountController : ControllerBase
     /// Finds by id account
     /// </summary>
     /// <remarks>
-    /// finds by account with transactions between two dates
+    /// finds by account with transactions between two dates or by id
     /// </remarks>
     /// <param name="accountId">Account id</param>
     /// <param name="dateStart">Date start transactions</param>
     /// <param name="dateEnd">Date end transactions</param>
     /// <response code="200">Finds by id account</response>
     /// <response code="400">AccountId is empty or bad format UUID</response>
+    /// <response code="401">Unauthorized</response>
     /// <response code="404">Account with id is not found</response>
-    [HttpGet("{accountId}/extract")]
+    [HttpGet("{accountId}")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<AccountResponseFullDto>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
     public async Task<IActionResult> FindByAccountIdExtract(
         Guid accountId,
-        DateTimeOffset dateStart,
-        DateTimeOffset dateEnd)
+        DateTimeOffset? dateStart = null,
+        DateTimeOffset? dateEnd = null)
     {
-        var query = new FindByIdAccountExtractQuery(accountId, dateStart, dateEnd);
-        var account = await _mediator.Send(query);
-        var response = ResultGenerator.Ok(account);
-        return Ok(response);
-    }
+        if (dateStart.HasValue && dateEnd.HasValue)
+        {
+            var query = new FindByIdAccountExtractQuery(accountId, dateStart.Value, dateEnd.Value);
+            var account = await _mediator.Send(query);
+            var response = ResultGenerator.Ok(account);
+            return Ok(response);
+        }
 
-    /// <summary>
-    /// Finds by id account
-    /// </summary>
-    /// <remarks>
-    /// finds by account with transactions
-    /// </remarks>
-    /// <response code="200">Finds by id account</response>
-    /// <response code="400">AccountId is empty or bad format UUID</response>
-    /// <response code="404">Account with id is not found</response>
-    [HttpGet("{accountId}")]
-    [ProducesResponseType(typeof(MbResponse<AccountResponseFullDto>), 200)]
-    [ProducesResponseType(typeof(MbError), 400)]
-    [ProducesResponseType(typeof(MbError), 404)]
-    public async Task<IActionResult> FindByAccountId(
-        Guid accountId)
-    {
-        var query = new FindByIdAccountQuery(accountId);
-        var account = await _mediator.Send(query);
-        var response = ResultGenerator.Ok(account);
-        return Ok(response);
+        var queryId = new FindByIdAccountQuery(accountId);
+        var accountResponse = await _mediator.Send(queryId);
+        var responseId = ResultGenerator.Ok(accountResponse);
+        return Ok(responseId);
     }
 
     /// <summary>
@@ -121,14 +114,10 @@ public class AccountController : ControllerBase
     /// </remarks>
     /// <response code="201">Create account</response>
     /// <response code="400">Account data is invalid</response>
+    /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
     [HttpPost]
-    [SwaggerOperation(
-        Summary = "Create account",
-        Description = "Create account for client ",
-        OperationId = "CreateAccount",
-        Tags = new[] { "Account" }
-    )]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
@@ -147,8 +136,10 @@ public class AccountController : ControllerBase
     /// </remarks>
     /// <response code="200">Patch by id a percent field account</response>
     /// <response code="400">Account data is invalid</response>
+    /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
     [HttpPatch("{accountId}/percent")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
@@ -169,8 +160,10 @@ public class AccountController : ControllerBase
     /// </remarks>
     /// <response code="200">Patch by id a type field account</response>
     /// <response code="400">Account data is invalid</response>
+    /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
     [HttpPatch("{accountId}/type")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
@@ -191,8 +184,10 @@ public class AccountController : ControllerBase
     /// </remarks>
     /// <response code="200">Delete by id account</response>
     /// <response code="400">AccountId is empty or bad format UUID</response>
+    /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
     [HttpDelete("{accountId}")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<Unit>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]

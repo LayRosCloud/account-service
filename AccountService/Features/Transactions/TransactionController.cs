@@ -4,6 +4,7 @@ using AccountService.Features.Transactions.FindByAccountIdTransactions;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
 using AccountService.Utils.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountService.Features.Transactions;
@@ -30,7 +31,9 @@ public class TransactionController : ControllerBase
     /// <response code="200">The transaction was finds</response>
     /// <response code="400">Object data is invalid</response>
     /// <response code="404">Object is not found</response>
+    /// <response code="401">Unauthorized</response>
     [HttpGet("/accounts/{accountId}/transactions")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<List<TransactionFullDto>>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
@@ -51,7 +54,9 @@ public class TransactionController : ControllerBase
     /// <response code="201">The transaction was created</response>
     /// <response code="400">Object data is invalid</response>
     /// <response code="404">Object is not found</response>
+    /// <response code="401">Unauthorized</response>
     [HttpPost]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<TransactionFullDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
@@ -71,7 +76,9 @@ public class TransactionController : ControllerBase
     /// <response code="201">The transfer transaction  was created</response>
     /// <response code="400">Object data is invalid</response>
     /// <response code="404">Object is not found</response>
+    /// <response code="401">Unauthorized</response>
     [HttpPost("transfer")]
+    [Authorize]
     [ProducesResponseType(typeof(MbResponse<TransactionFullDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]

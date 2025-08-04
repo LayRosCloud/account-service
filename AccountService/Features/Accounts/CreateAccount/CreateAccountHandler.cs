@@ -24,6 +24,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, Accoun
 
     public Task<AccountResponseShortDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
+        
         var verifyUser = new VerifyUserCommand(request.OwnerId);
         var hasOwnerUser = _mediator.Send(verifyUser, cancellationToken).Result;
 
