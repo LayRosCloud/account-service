@@ -21,6 +21,8 @@ public class ValidatorBehaviour<TRequest, TResponse> : IPipelineBehavior<TReques
             .Select(validator => validator.Validate(context))
             .SelectMany(result => result.Errors)
             .Where(failure => failure != null)
+            .GroupBy(field => field.PropertyName)
+            .Select(x => x.First())
             .ToList();
 
         if (failures.Any()) throw new ValidationException(failures);

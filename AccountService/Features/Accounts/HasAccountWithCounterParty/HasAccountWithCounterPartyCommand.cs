@@ -1,10 +1,8 @@
-﻿using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace AccountService.Features.Accounts.HasAccountWithCounterParty;
 
-[SwaggerSchema(Description = "Data transfer object for find account by id",
-    Required = new[] { "accountId", "ownerId" })]
 public class HasAccountWithCounterPartyCommand : IRequest<bool>
 {
     public HasAccountWithCounterPartyCommand(Guid ownerId, Guid accountId)
@@ -13,7 +11,15 @@ public class HasAccountWithCounterPartyCommand : IRequest<bool>
         AccountId = accountId;
     }
 
-    [SwaggerSchema("counterparty id")] public Guid OwnerId { get; }
+    /// <summary>
+    /// Owner id
+    /// </summary>
+    [Required] 
+    public Guid OwnerId { get; }
 
-    [SwaggerSchema("account id")] public Guid AccountId { get; }
+    /// <summary>
+    /// Account id
+    /// </summary>
+    [Required] 
+    public Guid AccountId { get; }
 }

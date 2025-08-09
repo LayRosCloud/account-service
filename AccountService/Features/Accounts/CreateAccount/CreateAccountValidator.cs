@@ -4,9 +4,11 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.CreateAccount;
 
+
+// ReSharper disable once UnusedMember.Global using ValidatorBehaviour
 public class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
 {
-    public CreateAccountValidator(IMediator mediator)
+    public CreateAccountValidator(ISender sender)
     {
         RuleFor(account => account.OwnerId)
             .NotEmpty().WithMessage("Field 'ownerId' is empty");
@@ -16,7 +18,7 @@ public class CreateAccountValidator : AbstractValidator<CreateAccountCommand>
             .Must(code =>
             {
                 var dto = new VerifyCurrencyCommand(code);
-                return mediator.Send(dto).Result;
+                return sender.Send(dto).Result;
             })
             .WithMessage("Currency with incorrect code");
 

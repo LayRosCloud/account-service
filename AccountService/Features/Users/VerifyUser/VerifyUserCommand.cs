@@ -8,6 +8,8 @@ public class VerifyUserCommand : IRequest<bool>
     {
         Id = id;
     }
-
+    /// <summary>
+    /// User id
+    /// </summary>
     public Guid Id { get; set; }
 }

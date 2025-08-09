@@ -1,10 +1,8 @@
-﻿using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace AccountService.Features.Accounts.DeleteAccount;
 
-[SwaggerSchema(Description = "Data transfer object for delete account",
-    Required = new[] { "accountId" })]
 public class DeleteAccountCommand : IRequest<Unit>
 {
     public DeleteAccountCommand(Guid accountId)
@@ -12,5 +10,9 @@ public class DeleteAccountCommand : IRequest<Unit>
         AccountId = accountId;
     }
 
-    [SwaggerSchema("id account")] public Guid AccountId { get; }
+    /// <summary>
+    /// account id
+    /// </summary>
+    [Required] 
+    public Guid AccountId { get; }
 }

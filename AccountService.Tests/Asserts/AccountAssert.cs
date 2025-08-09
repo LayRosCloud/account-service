@@ -2,7 +2,7 @@
 using AccountService.Features.Accounts.CreateAccount;
 using AccountService.Features.Accounts.Dto;
 
-namespace AccountService.Tests.Utils;
+namespace AccountService.Tests.Asserts;
 
 public class AccountAssert
 {

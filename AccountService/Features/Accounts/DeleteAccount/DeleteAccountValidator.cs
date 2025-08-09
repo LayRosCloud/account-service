@@ -2,6 +2,7 @@
 
 namespace AccountService.Features.Accounts.DeleteAccount;
 
+// ReSharper disable once UnusedMember.Global using ValidatorBehaviour
 public class DeleteAccountValidator : AbstractValidator<DeleteAccountCommand>
 {
     public DeleteAccountValidator()

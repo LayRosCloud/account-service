@@ -3,6 +3,7 @@ using MediatR;
 
 namespace AccountService.Features.Currencies.VerifyCurrency;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class VerifyCurrencyHandler : IRequestHandler<VerifyCurrencyCommand, bool>
 {
     public Task<bool> Handle(VerifyCurrencyCommand request, CancellationToken cancellationToken)

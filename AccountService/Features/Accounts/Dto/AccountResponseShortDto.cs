@@ -1,27 +1,44 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
+﻿namespace AccountService.Features.Accounts.Dto;
 
-namespace AccountService.Features.Accounts.Dto;
-
-[SwaggerSchema("Account response without transactions")]
 public class AccountResponseShortDto
 {
-    [SwaggerSchema("Account id")] public Guid Id { get; set; }
+    /// <summary>
+    /// Account id
+    /// </summary>
+    public Guid Id { get; set; }
 
-    [SwaggerSchema("Owner id")] public Guid OwnerId { get; set; }
+    /// <summary>
+    /// Owner id
+    /// </summary>
+    public Guid OwnerId { get; set; }
 
-    [SwaggerSchema("Type of account checking, credit, debit")]
+    /// <summary>
+    /// Type of account checking, credit, debit
+    /// </summary>
     public AccountType Type { get; set; }
 
-    [SwaggerSchema("Currency of account RUB, EUR and others")]
+    /// <summary>
+    /// Currency of account RUB, EUR and others
+    /// </summary>
     public string Currency { get; set; } = string.Empty;
 
-    [SwaggerSchema("Balance of account")] public decimal Balance { get; set; }
+    /// <summary>
+    /// Balance of account
+    /// </summary>
+    public decimal Balance { get; set; }
 
-    [SwaggerSchema("Percent of account")] public decimal? Percent { get; set; }
+    /// <summary>
+    /// Percent of account
+    /// </summary>
+    public decimal? Percent { get; set; }
 
-    [SwaggerSchema("Created account in ticks")]
-    public long CreatedAt { get; set; }
+    /// <summary>
+    /// Created date account
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; set; }
 
-    [SwaggerSchema("Closed account in ticks")]
-    public long? ClosedAt { get; set; }
+    /// <summary>
+    /// Closed date account
+    /// </summary>
+    public DateTimeOffset? ClosedAt { get; set; }
 }

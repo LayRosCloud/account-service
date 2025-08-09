@@ -9,5 +9,8 @@ public class VerifyCurrencyCommand : IRequest<bool>
         Code = code;
     }
 
+    /// <summary>
+    /// Code Currency
+    /// </summary>
     public string Code { get; set; }
 }

@@ -2,8 +2,8 @@
 
 public static class TimeUtils
 {
-    public static long GetTicksFromCurrentDate()
+    public static DateTimeOffset GetTicksFromCurrentDate()
     {
-        return DateTime.UtcNow.Ticks;
+        return DateTimeOffset.Now;
     }
 }

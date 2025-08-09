@@ -1,14 +1,15 @@
 ﻿using AccountService.Features.Currencies.FindAllCurrency;
 using AccountService.Features.Currencies.VerifyCurrency;
+using AccountService.Utils.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Currencies;
 
 [ApiController]
 [Route("/currencies")]
-[SwaggerTag("stub currencies")]
+[Produces("application/json")]
 public class CurrencyController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,33 +19,41 @@ public class CurrencyController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Find all currency
+    /// </summary>
+    /// <remarks>
+    /// Find all currency
+    /// </remarks>
+    /// <response code="401">Unauthorized</response>
+    /// <response code="200">The currency finds</response>
     [HttpGet]
-    [SwaggerOperation(
-        Summary = "Find all currency",
-        Description = "Find all currency",
-        OperationId = "FindAllCurrencies",
-        Tags = new[] { "Currency" }
-    )]
-    [SwaggerResponse(200, "The currency finds", typeof(List<string>))]
+    [Authorize]
+    [ProducesResponseType(typeof(MbResponse<List<string>>), 200)]
     public async Task<IActionResult> FindAllUsers()
     {
         var command = new FindAllCurrencyQuery();
         var currencies = await _mediator.Send(command);
-        return Ok(currencies);
+        var result = ResultGenerator.Ok(currencies);
+        return Ok(result);
     }
 
+    /// <summary>
+    /// Verify currency
+    /// </summary>
+    /// <remarks>
+    /// Check currency by code
+    /// </remarks>
+    /// <response code="200">exist currency</response>
+    /// <response code="401">Unauthorized</response>
     [HttpPost("{code}/verify")]
-    [SwaggerOperation(
-        Summary = "Verify currency",
-        Description = "Check currency by code",
-        OperationId = "VerifyCurrency",
-        Tags = new[] { "Currency" }
-    )]
-    [SwaggerResponse(200, "The transaction was created", typeof(bool))]
+    [Authorize]
+    [ProducesResponseType(typeof(MbResponse<bool>), 200)]
     public async Task<IActionResult> Verify(string code)
     {
         var command = new VerifyCurrencyCommand(code);
         var currency = await _mediator.Send(command);
-        return Ok(currency);
+        var result = ResultGenerator.Ok(currency);
+        return Ok(result);
     }
 }

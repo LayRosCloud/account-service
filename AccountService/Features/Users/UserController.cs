@@ -1,14 +1,15 @@
 ﻿using AccountService.Features.Users.FindAllUsers;
 using AccountService.Features.Users.VerifyUser;
+using AccountService.Utils.Result;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Users;
 
 [ApiController]
 [Route("/users")]
-[SwaggerTag("stub service of users")]
+[Produces("application/json")]
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,33 +19,41 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Find all users
+    /// </summary>
+    /// <remarks>
+    /// Find all ids users
+    /// </remarks>
+    /// <response code="200">The users find all</response>
+    /// <response code="401">Unauthorized</response>
     [HttpGet]
-    [SwaggerOperation(
-        Summary = "Find all users",
-        Description = "Find all ids users",
-        OperationId = "FindAllUser",
-        Tags = new[] { "User" }
-    )]
-    [SwaggerResponse(200, "The users find all", typeof(List<Guid>))]
+    [Authorize]
+    [ProducesResponseType(typeof(MbResponse<List<User>>), 200)]
     public async Task<IActionResult> FindAllUsers()
     {
         var command = new FindAllUsersQuery();
         var users = await _mediator.Send(command);
-        return Ok(users);
+        var result = ResultGenerator.Ok(users);
+        return Ok(result);
     }
 
+    /// <summary>
+    /// Verify user
+    /// </summary>
+    /// <remarks>
+    /// Check user by id
+    /// </remarks>
+    /// <response code="200">The user verify</response>
+    /// <response code="401">Unauthorized</response>
     [HttpPost("{accountId}/verify")]
-    [SwaggerOperation(
-        Summary = "Verify user",
-        Description = "Check user by id",
-        OperationId = "VerifyUser",
-        Tags = new[] { "User" }
-    )]
-    [SwaggerResponse(200, "The user verify", typeof(bool))]
+    [Authorize]
+    [ProducesResponseType(typeof(MbResponse<bool>), 200)]
     public async Task<IActionResult> Verify(Guid accountId)
     {
         var command = new VerifyUserCommand(accountId);
         var result = await _mediator.Send(command);
-        return Ok(result);
+        var response = ResultGenerator.Ok(result);
+        return Ok(response);
     }
 }

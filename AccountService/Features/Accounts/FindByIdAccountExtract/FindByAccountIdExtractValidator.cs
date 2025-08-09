@@ -2,6 +2,7 @@
 
 namespace AccountService.Features.Accounts.FindByIdAccountExtract;
 
+// ReSharper disable once UnusedMember.Global using ValidatorBehaviour
 public class FindByAccountIdExtractValidator : AbstractValidator<FindByIdAccountExtractQuery>
 {
     public FindByAccountIdExtractValidator()

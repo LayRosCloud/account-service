@@ -2,6 +2,7 @@
 
 namespace AccountService.Features.Transactions.CreateTransaction;
 
+// ReSharper disable once UnusedMember.Global using ValidatorBehaviour
 public class CreateTransactionValidator : AbstractValidator<CreateTransactionCommand>
 {
     public CreateTransactionValidator()

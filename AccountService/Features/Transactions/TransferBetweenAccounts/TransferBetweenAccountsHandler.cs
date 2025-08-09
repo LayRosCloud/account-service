@@ -1,85 +1,69 @@
-﻿using System.ComponentModel.DataAnnotations;
-using AccountService.Features.Accounts;
+﻿using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AccountService.Features.Transactions.Dto;
-using AccountService.Features.Transactions.Utils.Balance;
+using AccountService.Features.Transactions.Utils.Transfer;
 using AccountService.Utils.Data;
-using AccountService.Utils.Exceptions;
-using AccountService.Utils.Time;
 using AutoMapper;
 using MediatR;
 
 namespace AccountService.Features.Transactions.TransferBetweenAccounts;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAccountsCommand, TransactionFullDto>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IStorageContext _storage;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
+    private readonly ITransferFactory _factory;
+    private readonly IAccountRepository _accountRepository;
+    private readonly ITransactionRepository _repository;
+    private readonly ITransactionWrapper _wrapper;
 
-    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IStorageContext storage, ITransferFactory factory, IAccountRepository accountRepository, ITransactionRepository repository, ITransactionWrapper wrapper)
     {
         _mapper = mapper;
         _mediator = mediator;
+        _storage = storage;
+        _factory = factory;
+        _accountRepository = accountRepository;
+        _repository = repository;
+        _wrapper = wrapper;
     }
 
-    public Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
+    public async Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
     {
-        var accountFrom = FindByIdAccount(request.AccountId);
-        var accountTo = FindByIdAccount(request.CounterPartyAccountId);
-
-        if (accountFrom == null || accountTo == null)
-            throw ExceptionUtils.GetNotFoundException("Accounts",
-                $"{request.AccountId} {request.CounterPartyAccountId}");
-
-        CheckAccountConditions(accountFrom, accountTo);
-
-        var transactionFrom = CreateTransaction(request, accountFrom);
-        var transactionTo = CreateTransaction(request, accountTo,
-            transactionFrom.Type == TransactionType.Debit ? TransactionType.Credit : TransactionType.Debit);
-        transactionTo.AccountId = transactionFrom.CounterPartyAccountId!.Value;
-        transactionTo.CounterPartyAccountId = transactionFrom.AccountId;
-        AddTransactionToDatabase(transactionFrom, accountFrom);
-        AddTransactionToDatabase(transactionTo, accountTo);
-        return Task.FromResult(_mapper.Map<TransactionFullDto>(transactionFrom));
+        var (transaction1, _) =
+            await _wrapper.Execute(_ => CreateTransactions(request, cancellationToken), cancellationToken);
+        return _mapper.Map<TransactionFullDto>(transaction1);
     }
 
-    private Transaction CreateTransaction(TransferBetweenAccountsCommand request, Account account,
-        TransactionType? type = null)
+    private async Task<(Transaction, Transaction)> CreateTransactions(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
     {
-        var transaction = _mapper.Map<Transaction>(request);
-        if (type != null)
-            transaction.Type = type.Value;
-        SetDefaultSettingsTransaction(transaction, account);
-        var proxyFrom = new PaymentProxy(transaction, account);
+        var (accountFrom, accountTo) = await FindByIds(request.AccountId, request.CounterPartyAccountId);
+        var transferHandler = _factory.GetTransfer(accountFrom, accountTo, request);
 
-        proxyFrom.ExecuteTransaction();
+        transferHandler.Validate();
 
-        return transaction;
+        transferHandler.CreateTransactionForAccountFrom(_mapper.Map<Transaction>(request), _accountRepository);
+        transferHandler.CreateTransactionForAccountTo(_mapper.Map<Transaction>(request), _accountRepository);
+
+        transferHandler.SwapTransactionsIds();
+
+        var (transactionFrom, transactionTo) = await transferHandler.SaveToDatabaseAsync(_repository);
+        await _storage.SaveChangesAsync(cancellationToken);
+        return (transactionFrom, transactionTo);
     }
 
-    private void AddTransactionToDatabase(Transaction transaction, Account account)
+    private async Task<(Account, Account)> FindByIds(Guid id1, Guid id2)
     {
-        account.Transactions.Add(transaction);
-        _databaseContext.Transactions.Add(transaction);
+        var account1 = await FindByIdAccount(id1);
+        var account2 = await FindByIdAccount(id2);
+        return (account1, account2);
     }
 
-    private static void CheckAccountConditions(Account accountFrom, Account accountTo)
-    {
-        if (!accountFrom.Currency.Equals(accountTo.Currency))
-            throw new ValidationException("Currency accounts is different");
-    }
-
-    private Account FindByIdAccount(Guid id)
+    private async Task<Account> FindByIdAccount(Guid id)
     {
         var query = new FindByIdAccountInternalQuery(id);
-        return _mapper.Map<Account>(_mediator.Send(query).Result);
-    }
-
-    private static void SetDefaultSettingsTransaction(Transaction transaction, Account account)
-    {
-        transaction.Currency = account.Currency;
-        transaction.CreatedAt = TimeUtils.GetTicksFromCurrentDate();
-        transaction.Id = Guid.NewGuid();
+        return _mapper.Map<Account>(await _mediator.Send(query));
     }
 }
