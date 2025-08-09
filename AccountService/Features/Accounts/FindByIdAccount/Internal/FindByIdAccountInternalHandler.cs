@@ -7,18 +7,26 @@ namespace AccountService.Features.Accounts.FindByIdAccount.Internal;
 // ReSharper disable once UnusedMember.Global using Mediator
 public class FindByIdAccountInternalHandler : IRequestHandler<FindByIdAccountInternalQuery, Account>
 {
-    private readonly IDatabaseContext _database;
+    private readonly ITransactionWrapper _wrapper;
+    private readonly IAccountRepository _repository;
 
-    public FindByIdAccountInternalHandler(IDatabaseContext database)
+    public FindByIdAccountInternalHandler(ITransactionWrapper wrapper, IAccountRepository repository)
     {
-        _database = database;
+        _wrapper = wrapper;
+        _repository = repository;
     }
 
-    public Task<Account> Handle(FindByIdAccountInternalQuery request, CancellationToken cancellationToken)
+    public async Task<Account> Handle(FindByIdAccountInternalQuery request, CancellationToken cancellationToken)
     {
-        var account = _database.Accounts.SingleOrDefault(acc => acc.Id == request.AccountId);
+        var account = await _wrapper.Execute(_ => FindByIdAsync(request.AccountId), cancellationToken);
+        return account;
+    }
+
+    private async Task<Account> FindByIdAsync(Guid accountId)
+    {
+        var account = await _repository.FindByIdAsync(accountId);
         if (account == null)
-            throw ExceptionUtils.GetNotFoundException("Account", request.AccountId);
-        return Task.FromResult(account);
+            throw ExceptionUtils.GetNotFoundException("Account", accountId);
+        return account;
     }
 }

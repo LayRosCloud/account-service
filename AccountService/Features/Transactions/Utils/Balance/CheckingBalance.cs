@@ -11,7 +11,11 @@ public class CheckingBalance : IBalance
     {
         if (account.Type != AccountType.Checking)
             throw new ValidationException("Error! Invalid type for checking account");
+
+        Account = account;
     }
+
+    public Account Account { get; }
 
     public void PerformOperation(decimal amount)
     {

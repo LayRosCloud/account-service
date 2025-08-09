@@ -1,12 +1,12 @@
-﻿using AccountService.Utils.Data;
+﻿using AccountService.Features.Accounts;
 
 namespace AccountService.Features.Transactions.Utils.Transfer;
 
 public interface ITransfer
 {
     void Validate();
-    void CreateTransactionForAccountFrom(Transaction transaction);
-    void CreateTransactionForAccountTo(Transaction transaction);
+    void CreateTransactionForAccountFrom(Transaction transaction, IAccountRepository repository);
+    void CreateTransactionForAccountTo(Transaction transaction, IAccountRepository repository);
     void SwapTransactionsIds();
-    (Transaction, Transaction) SaveToDatabase(IDatabaseContext context);
+    Task<(Transaction, Transaction)> SaveToDatabaseAsync(ITransactionRepository repository);
 }

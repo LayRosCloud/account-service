@@ -6,17 +6,24 @@ namespace AccountService.Features.Accounts.HasAccountWithCounterParty;
 // ReSharper disable once UnusedMember.Global using Mediator
 public class HasAccountWithCounterPartyHandler : IRequestHandler<HasAccountWithCounterPartyCommand, bool>
 {
-    private readonly IDatabaseContext _database;
+    private readonly IAccountRepository _repository;
+    private readonly ITransactionWrapper _wrapper;
 
-    public HasAccountWithCounterPartyHandler(IDatabaseContext database)
+    public HasAccountWithCounterPartyHandler(IAccountRepository repository, ITransactionWrapper wrapper)
     {
-        _database = database;
+        _repository = repository;
+        _wrapper = wrapper;
     }
 
-    public Task<bool> Handle(HasAccountWithCounterPartyCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(HasAccountWithCounterPartyCommand request, CancellationToken cancellationToken)
     {
-        var account = _database.Accounts.SingleOrDefault(acc =>
-            acc.Id == request.AccountId && acc.OwnerId == request.OwnerId);
-        return Task.FromResult(account != null);
+        var hasAccount = await _wrapper.Execute(_ => HasAccountAndOwnerAsync(request), cancellationToken);
+        return hasAccount;
+    }
+
+    private async Task<bool> HasAccountAndOwnerAsync(HasAccountWithCounterPartyCommand request)
+    {
+        var hasAccount = await _repository.HasAccountAndOwnerAsync(request.AccountId, request.OwnerId);
+        return hasAccount;
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace AccountService.Features.Transactions;
+﻿using AccountService.Utils.Data;
 
-public class Transaction
+namespace AccountService.Features.Transactions;
+
+public class Transaction: IDateCreator
 {
     public Guid Id { get; set; }
     public Guid AccountId { get; set; }

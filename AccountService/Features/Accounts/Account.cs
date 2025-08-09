@@ -1,8 +1,9 @@
 ﻿using AccountService.Features.Transactions;
+using AccountService.Utils.Data;
 
 namespace AccountService.Features.Accounts;
 
-public class Account : ICloneable
+public class Account : ICloneable, IDateCreator
 {
     public Guid Id { get; set; }
     public Guid OwnerId { get; set; }
@@ -12,7 +13,10 @@ public class Account : ICloneable
     public decimal? Percent { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ClosedAt { get; set; }
-    public List<Transaction> Transactions { get; } = new();
+    public byte[]? Version { get; set; }
+    public IEnumerable<Transaction> Transactions => AccountTransactions.Concat(CounterPartyTransactions);
+    public List<Transaction> AccountTransactions { get; } = new();
+    public List<Transaction> CounterPartyTransactions { get; } = new();
 
     public object Clone()
     {

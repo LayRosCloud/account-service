@@ -11,33 +11,47 @@ namespace AccountService.Features.Transactions.TransferBetweenAccounts;
 // ReSharper disable once UnusedMember.Global using Mediator
 public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAccountsCommand, TransactionFullDto>
 {
-    private readonly IDatabaseContext _database;
+    private readonly IStorageContext _storage;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
     private readonly ITransferFactory _factory;
+    private readonly IAccountRepository _accountRepository;
+    private readonly ITransactionRepository _repository;
+    private readonly ITransactionWrapper _wrapper;
 
-    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IDatabaseContext database, ITransferFactory factory)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IStorageContext storage, ITransferFactory factory, IAccountRepository accountRepository, ITransactionRepository repository, ITransactionWrapper wrapper)
     {
         _mapper = mapper;
         _mediator = mediator;
-        _database = database;
+        _storage = storage;
         _factory = factory;
+        _accountRepository = accountRepository;
+        _repository = repository;
+        _wrapper = wrapper;
     }
 
     public async Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
+    {
+        var (transaction1, _) =
+            await _wrapper.Execute(_ => CreateTransactions(request, cancellationToken), cancellationToken);
+        return _mapper.Map<TransactionFullDto>(transaction1);
+    }
+
+    private async Task<(Transaction, Transaction)> CreateTransactions(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
     {
         var (accountFrom, accountTo) = await FindByIds(request.AccountId, request.CounterPartyAccountId);
         var transferHandler = _factory.GetTransfer(accountFrom, accountTo, request);
 
         transferHandler.Validate();
 
-        transferHandler.CreateTransactionForAccountFrom(_mapper.Map<Transaction>(request));
-        transferHandler.CreateTransactionForAccountTo(_mapper.Map<Transaction>(request));
+        transferHandler.CreateTransactionForAccountFrom(_mapper.Map<Transaction>(request), _accountRepository);
+        transferHandler.CreateTransactionForAccountTo(_mapper.Map<Transaction>(request), _accountRepository);
 
         transferHandler.SwapTransactionsIds();
 
-        var (transactionFrom, _) = transferHandler.SaveToDatabase(_database);
-        return _mapper.Map<TransactionFullDto>(transactionFrom);
+        var (transactionFrom, transactionTo) = await transferHandler.SaveToDatabaseAsync(_repository);
+        await _storage.SaveChangesAsync(cancellationToken);
+        return (transactionFrom, transactionTo);
     }
 
     private async Task<(Account, Account)> FindByIds(Guid id1, Guid id2)

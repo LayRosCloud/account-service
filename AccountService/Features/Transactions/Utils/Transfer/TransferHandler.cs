@@ -1,7 +1,6 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Features.Transactions.TransferBetweenAccounts;
 using AccountService.Features.Transactions.Utils.Balance;
-using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AccountService.Utils.Time;
 using FluentValidation;
@@ -32,15 +31,15 @@ public class TransferHandler : ITransfer
             throw new ValidationException("Currency accounts is different");
     }
 
-    public void CreateTransactionForAccountFrom(Transaction transaction)
+    public void CreateTransactionForAccountFrom(Transaction transaction, IAccountRepository repository)
     {
-        CreateTransaction(transaction);
+        CreateTransaction(transaction, repository);
     }
 
-    public void CreateTransactionForAccountTo(Transaction transaction)
+    public void CreateTransactionForAccountTo(Transaction transaction, IAccountRepository repository)
     {
         transaction.Type = TransactionType.Debit == transaction.Type ? TransactionType.Credit : TransactionType.Debit;
-        CreateTransaction(transaction, true);
+        CreateTransaction(transaction, repository,true);
     }
 
     public void SwapTransactionsIds()
@@ -49,19 +48,19 @@ public class TransferHandler : ITransfer
         _accountTo.Transaction.CounterPartyAccountId = _accountFrom.Transaction.AccountId;
     }
 
-    private void CreateTransaction(Transaction transaction, bool isAccountTo = false)
+    private void CreateTransaction(Transaction transaction, IAccountRepository repository, bool isAccountTo = false)
     {
         var account = isAccountTo ? _accountTo : _accountFrom;
         SetDefaultSettingsTransaction(transaction, account.Account.Currency);
         var balance = new PaymentBalance(transaction, account.Account);
-        balance.ExecuteTransaction();
+        balance.ExecuteTransactionAsync(repository);
         account.Transaction = transaction;
     }
 
-    public (Transaction, Transaction) SaveToDatabase(IDatabaseContext context)
+    public async Task<(Transaction, Transaction)> SaveToDatabaseAsync(ITransactionRepository repository)
     {
-        _accountFrom.AddToDatabase(context);
-        _accountTo.AddToDatabase(context);
+        await repository.CreateRangeAsync(_accountFrom.Transaction, _accountTo.Transaction);
+
         return (_accountFrom.Transaction, _accountTo.Transaction);
     }
 

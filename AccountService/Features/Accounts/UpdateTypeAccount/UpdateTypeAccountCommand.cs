@@ -1,11 +1,9 @@
-﻿using AccountService.Features.Accounts.Dto;
+﻿using System.Text.Json.Serialization;
+using AccountService.Features.Accounts.Dto;
 using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Accounts.UpdateTypeAccount;
 
-[SwaggerSchema(Description = "Data transfer object for find account by id",
-    Required = new[] { "type" })]
 public class UpdateTypeAccountCommand : IRequest<AccountResponseShortDto>
 {
     public UpdateTypeAccountCommand(AccountType type)
@@ -13,8 +11,14 @@ public class UpdateTypeAccountCommand : IRequest<AccountResponseShortDto>
         Type = type;
     }
 
-    [SwaggerSchema("account id", ReadOnly = true)]
+    /// <summary>
+    /// Account id
+    /// </summary>
+    [JsonIgnore]
     public Guid AccountId { get; set; }
 
-    [SwaggerSchema("type")] public AccountType Type { get; }
+    /// <summary>
+    /// Type of Account
+    /// </summary>
+    public AccountType Type { get; }
 }

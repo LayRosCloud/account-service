@@ -6,16 +6,17 @@ namespace AccountService.Features.Transactions.Utils.Balance;
 
 public class CreditBalance : IBalance
 {
-    private readonly Account _account;
     private readonly TransactionType _type;
 
     public CreditBalance(Account account, TransactionType type)
     {
         if (account.Type != AccountType.Credit)
             throw new ValidationException("Error! Invalid type for credit balance");
-        _account = account;
+        Account = account;
         _type = type;
     }
+
+    public Account Account { get; }
 
     public void PerformOperation(decimal amount)
     {
@@ -31,8 +32,8 @@ public class CreditBalance : IBalance
 
     private void Deposit(decimal amount)
     {
-        Validate(_account, amount);
-        _account.Balance += amount;
+        Validate(Account, amount);
+        Account.Balance += amount;
     }
 
     private static void Validate(Account account, decimal amount)
