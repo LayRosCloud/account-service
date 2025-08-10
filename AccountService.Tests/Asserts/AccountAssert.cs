@@ -6,7 +6,7 @@ namespace AccountService.Tests.Asserts;
 
 public class AccountAssert
 {
-    public static void AssertAccountAndShortDto(Account account, AccountResponseShortDto destination)
+    public static void Equal(Account account, AccountResponseShortDto destination)
     {
         Assert.NotNull(destination);
         Assert.Equal(account.Id, destination.Id);
@@ -19,7 +19,20 @@ public class AccountAssert
         Assert.Equal(account.Currency, destination.Currency);
     }
 
-    public static void AssertCreateCommandAndEntity(CreateAccountCommand command, Account account)
+    public static void Equal(Account account, Account destination)
+    {
+        Assert.NotNull(destination);
+        Assert.Equal(account.Id, destination.Id);
+        Assert.Equal(account.Type, destination.Type);
+        Assert.Equal(account.OwnerId, destination.OwnerId);
+        Assert.Equal(account.Balance, destination.Balance);
+        Assert.Equal(account.CreatedAt, destination.CreatedAt);
+        Assert.Equal(account.ClosedAt, destination.ClosedAt);
+        Assert.Equal(account.Percent, destination.Percent);
+        Assert.Equal(account.Currency, destination.Currency);
+    }
+
+    public static void Equal(CreateAccountCommand command, Account account)
     {
         Assert.NotNull(account);
         Assert.Equal(command.Balance, account.Balance);
@@ -29,7 +42,7 @@ public class AccountAssert
         Assert.Equal(command.Currency, account.Currency);
     }
 
-    public static void AssertAccountAndFullDto(Account account, AccountResponseFullDto destination)
+    public static void Equal(Account account, AccountResponseFullDto destination)
     {
         Assert.NotNull(destination);
         Assert.Equal(account.Id, destination.Id);

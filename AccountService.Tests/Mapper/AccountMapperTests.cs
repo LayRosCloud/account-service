@@ -35,7 +35,7 @@ public class AccountMapperTests
         var destination = _mapper.Map<AccountResponseShortDto>(account);
 
         //Assert
-        AccountAssert.AssertAccountAndShortDto(account, destination);
+        AccountAssert.Equal(account, destination);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class AccountMapperTests
         var destination = _mapper.Map<AccountResponseFullDto>(account);
 
         //Assert
-        AccountAssert.AssertAccountAndFullDto(account, destination);
+        AccountAssert.Equal(account, destination);
     }
 
     [Fact]
@@ -69,6 +69,6 @@ public class AccountMapperTests
         var destination = _mapper.Map<Account>(command);
 
         //Assert
-        AccountAssert.AssertCreateCommandAndEntity(command, destination);
+        AccountAssert.Equal(command, destination);
     }
 }

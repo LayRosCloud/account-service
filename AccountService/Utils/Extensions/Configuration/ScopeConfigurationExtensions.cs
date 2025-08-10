@@ -1,5 +1,6 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Features.Transactions;
+using AccountService.Features.Transactions.DailyPercentAddToAccount;
 using AccountService.Features.Transactions.Utils.Transfer;
 using AccountService.Features.Users.Utils;
 using AccountService.Utils.Data;
@@ -16,6 +17,7 @@ public static class ScopeConfigurationExtensions
         services.AddScoped<IKeyCloakClient, KeyCloakClient>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<DailyPercentAddedToAccount>();
 
         return services;
     }

@@ -18,9 +18,9 @@ public class PaymentBalance
         _amount = transaction.Sum;
     }
 
-    public void ExecuteTransactionAsync(IAccountRepository repository)
+    public void ExecuteTransactionAsync(IAccountRepository? repository = null)
     {
         _balance.PerformOperation(_amount);
-        repository.Update(_balance.Account); 
+        repository?.Update(_balance.Account); 
     }
 }

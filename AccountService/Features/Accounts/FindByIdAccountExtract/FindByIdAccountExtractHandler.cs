@@ -24,24 +24,24 @@ public class FindByIdAccountExtractHandler : IRequestHandler<FindByIdAccountExtr
     {
         var account = await ExistsAccountAsync(request.AccountId);
 
-        var balance = account.Transactions.Where(x => x.CreatedAt < request.DateStart).Sum(x => x.Sum);
+        var balance = account.AccountTransactions.Where(x => x.CreatedAt < request.DateStart).Sum(x => x.Sum);
         var result = _mapper.Map<AccountResponseFullDto>(account);
         result.Balance = balance;
 
-        var transactions = new LinkedList<TransactionFullDto>();
+        var transactions = new LinkedList<Transaction>();
         var clone = (Account)account.Clone();
         clone.Balance = balance;
-        foreach (var transaction in result.Transactions)
+        foreach (var transaction in clone.AccountTransactions)
             if (InBetweenTwoDates(request, transaction.CreatedAt))
             {
                 var transactionTemp = _mapper.Map<Transaction>(transaction);
                 var proxy = new PaymentBalance(transactionTemp, clone);
-                proxy.ExecuteTransactionAsync(null); //TODO:
+                proxy.ExecuteTransactionAsync();
                 transactions.AddLast(transaction);
             }
 
         result.Balance = clone.Balance;
-        result.Transactions = transactions.ToList();
+        result.Transactions = _mapper.Map<List<TransactionFullDto>>(transactions);
 
         return _mapper.Map<AccountResponseFullDto>(result);
     }

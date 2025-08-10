@@ -14,7 +14,7 @@ public class Account : ICloneable, IDateCreator
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ClosedAt { get; set; }
     public byte[]? Version { get; set; }
-    public IEnumerable<Transaction> Transactions => AccountTransactions.Concat(CounterPartyTransactions);
+    public IList<Transaction> Transactions => AccountTransactions.Concat(CounterPartyTransactions).ToList();
     public List<Transaction> AccountTransactions { get; } = new();
     public List<Transaction> CounterPartyTransactions { get; } = new();
 

@@ -46,9 +46,9 @@ public class AccountRepository : IAccountRepository
         return result.Entity;
     }
 
-    public Account Delete(Account account)
+    public async Task<IList<Account>> FindAllByPercentNotNullAndNotClosedAtAsync()
     {
-        var result = _storage.Accounts.Remove(account);
-        return result.Entity;
+        var result = await _storage.Accounts.Where(x => x.Percent.HasValue).ToListAsync();
+        return result;
     }
 }

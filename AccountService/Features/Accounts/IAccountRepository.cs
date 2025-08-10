@@ -7,5 +7,5 @@ public interface IAccountRepository
     Task<Account?> FindByIdAsync(Guid id, bool isIncludeTransactions = false);
     Task<Account> CreateAsync(Account account);
     Account Update(Account account);
-    Account Delete(Account account);
+    Task<IList<Account>> FindAllByPercentNotNullAndNotClosedAtAsync();
 }

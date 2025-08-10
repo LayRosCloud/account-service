@@ -12,4 +12,5 @@ public class VerifyUserCommand : IRequest<bool>
     /// User id
     /// </summary>
     public Guid Id { get; set; }
+
 }

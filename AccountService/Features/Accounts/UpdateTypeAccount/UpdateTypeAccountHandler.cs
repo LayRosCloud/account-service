@@ -4,7 +4,6 @@ using AccountService.Utils.Data;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using System.Threading;
 
 namespace AccountService.Features.Accounts.UpdateTypeAccount;
 
