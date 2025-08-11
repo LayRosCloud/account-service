@@ -1,14 +1,21 @@
-﻿using AccountService.Utils.Data;
+﻿using AccountService.Features.Users.Utils;
 using MediatR;
 
 namespace AccountService.Features.Users.FindAllUsers;
 
-public class FindAllUsersHandler : IRequestHandler<FindAllUsersQuery, List<Guid>>
+// ReSharper disable once UnusedMember.Global using Mediator
+public class FindAllUsersHandler : IRequestHandler<FindAllUsersQuery, IEnumerable<User>?>
 {
-    private readonly DatabaseContext _databaseContext = DatabaseContext.Instance;
+    private readonly IKeyCloakClient _client;
 
-    public Task<List<Guid>> Handle(FindAllUsersQuery request, CancellationToken cancellationToken)
+    public FindAllUsersHandler(IKeyCloakClient client)
     {
-        return Task.FromResult(_databaseContext.CounterParties);
+        _client = client;
+    }
+
+    public async Task<IEnumerable<User>?> Handle(FindAllUsersQuery request, CancellationToken cancellationToken)
+    {
+        var users = await _client.GetAllUsers();
+        return users;
     }
 }

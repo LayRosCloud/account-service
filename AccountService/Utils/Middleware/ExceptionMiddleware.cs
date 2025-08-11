@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using AccountService.Utils.Exceptions;
+using AccountService.Utils.Result;
 using FluentValidation;
 
 namespace AccountService.Utils.Middleware;
@@ -18,6 +19,7 @@ public class ExceptionMiddleware
         _next = next;
     }
 
+    // ReSharper disable once UnusedMember.Global using ASP.NET middleware before request
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -57,6 +59,6 @@ public class ExceptionMiddleware
     {
         context.Response.ContentType = HeaderApplicationJson;
         context.Response.StatusCode = code;
-        await context.Response.WriteAsJsonAsync(new ExceptionDto(message, code));
+        await context.Response.WriteAsJsonAsync(new MbError(code, message));
     }
 }

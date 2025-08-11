@@ -1,6 +1,8 @@
-﻿namespace AccountService.Features.Transactions;
+﻿using AccountService.Utils.Data;
 
-public class Transaction
+namespace AccountService.Features.Transactions;
+
+public class Transaction: IDateCreator
 {
     public Guid Id { get; set; }
     public Guid AccountId { get; set; }
@@ -9,5 +11,5 @@ public class Transaction
     public string Currency { get; set; } = string.Empty;
     public TransactionType Type { get; set; }
     public string Description { get; set; } = string.Empty;
-    public long CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }

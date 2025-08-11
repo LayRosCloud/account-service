@@ -1,25 +1,31 @@
-﻿using AccountService.Features.Accounts.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+using AccountService.Features.Accounts.Dto;
 using MediatR;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace AccountService.Features.Accounts.FindByIdAccountExtract;
 
-[SwaggerSchema(Description = "Data transfer object for find account by id",
-    Required = new[] { "accountId" })]
 public class FindByIdAccountExtractQuery : IRequest<AccountResponseFullDto>
 {
-    public FindByIdAccountExtractQuery(Guid accountId, long dateStart, long dateEnd)
+    public FindByIdAccountExtractQuery(Guid accountId, DateTimeOffset dateStart, DateTimeOffset dateEnd)
     {
         AccountId = accountId;
         DateStart = dateStart;
         DateEnd = dateEnd;
     }
 
-    [SwaggerSchema("date start transactions")]
-    public long DateStart { get; }
+    /// <summary>
+    /// date start transactions
+    /// </summary>
+    public DateTimeOffset DateStart { get; }
 
-    [SwaggerSchema("date end transactions")]
-    public long DateEnd { get; }
+    /// <summary>
+    /// date end transactions
+    /// </summary>
+    public DateTimeOffset DateEnd { get; }
 
-    [SwaggerSchema("account id")] public Guid AccountId { get; }
+    /// <summary>
+    /// account id
+    /// </summary>
+    [Required]
+    public Guid AccountId { get; }
 }

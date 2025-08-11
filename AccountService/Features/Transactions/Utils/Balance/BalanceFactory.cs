@@ -4,11 +4,11 @@ namespace AccountService.Features.Transactions.Utils.Balance;
 
 public class BalanceFactory
 {
-    public IBalance GetBalance(Account account, TransactionType type)
+    public IBalance GetBalanceHandler(Account account, TransactionType type)
     {
         return account.Type switch
         {
-            AccountType.Checking => new CheckingBalance(),
+            AccountType.Checking => new CheckingBalance(account),
             AccountType.Credit => new CreditBalance(account, type),
             AccountType.Deposit => new DepositBalance(account, type),
             _ => throw new ArgumentOutOfRangeException()

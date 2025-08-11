@@ -6,14 +6,17 @@ namespace AccountService.Features.Transactions.Utils.Balance;
 
 public class DepositBalance : IBalance
 {
-    private readonly Account _account;
     private readonly TransactionType _type;
 
     public DepositBalance(Account account, TransactionType type)
     {
-        _account = account;
+        if (account.Type != AccountType.Deposit)
+            throw new ValidationException("Error! Invalid account type for Deposit balance");
+        Account = account;
         _type = type;
     }
+
+    public Account Account { get; }
 
     public void PerformOperation(decimal amount)
     {
@@ -30,17 +33,17 @@ public class DepositBalance : IBalance
 
     private void Withdraw(decimal amount)
     {
-        Validate(_account, amount);
-        if (_account.Balance - amount < 0)
+        Validate(Account, amount);
+        if (Account.Balance - amount < 0)
             throw new ValidationException("The account balance is insufficient");
 
-        _account.Balance -= amount;
+        Account.Balance -= amount;
     }
 
     private void Deposit(decimal amount)
     {
-        Validate(_account, amount);
-        _account.Balance += amount;
+        Validate(Account, amount);
+        Account.Balance += amount;
     }
 
     private static void Validate(Account account, decimal amount)

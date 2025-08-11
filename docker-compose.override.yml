@@ -1,0 +1,7 @@
+services:
+  accountservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "8080"

@@ -1,15 +1,21 @@
-﻿using AccountService.Utils.Data;
+﻿using AccountService.Features.Users.Utils;
 using MediatR;
 
 namespace AccountService.Features.Users.VerifyUser;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class VerifyUserHandler : IRequestHandler<VerifyUserCommand, bool>
 {
-    private readonly DatabaseContext _database = DatabaseContext.Instance;
+    private readonly IKeyCloakClient _client;
 
-    public Task<bool> Handle(VerifyUserCommand request, CancellationToken cancellationToken)
+    public VerifyUserHandler(IKeyCloakClient client)
     {
-        var result = _database.CounterParties.Any(id => id == request.Id);
-        return Task.FromResult(result);
+        _client = client;
+    }
+
+    public async Task<bool> Handle(VerifyUserCommand request, CancellationToken cancellationToken)
+    {
+        var user = await _client.FindUser(request.Id);
+        return user != null;
     }
 }

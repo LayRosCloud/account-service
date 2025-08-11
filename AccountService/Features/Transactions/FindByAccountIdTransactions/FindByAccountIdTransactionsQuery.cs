@@ -1,4 +1,5 @@
-﻿using AccountService.Features.Transactions.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+using AccountService.Features.Transactions.Dto;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -12,6 +13,9 @@ public class FindByAccountIdTransactionsQuery : IRequest<List<TransactionFullDto
     {
         AccountId = accountId;
     }
-
+    /// <summary>
+    /// Account id
+    /// </summary>
+    [Required]
     public Guid AccountId { get; }
 }

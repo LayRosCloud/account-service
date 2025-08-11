@@ -5,6 +5,7 @@ using MediatR;
 
 namespace AccountService.Features.Accounts.FindByIdAccount;
 
+// ReSharper disable once UnusedMember.Global using Mediator
 public class FindByIdAccountHandler : IRequestHandler<FindByIdAccountQuery, AccountResponseFullDto>
 {
     private readonly IMapper _mapper;

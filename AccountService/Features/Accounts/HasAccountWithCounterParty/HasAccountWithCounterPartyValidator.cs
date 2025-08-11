@@ -2,6 +2,8 @@
 
 namespace AccountService.Features.Accounts.HasAccountWithCounterParty;
 
+
+// ReSharper disable once UnusedMember.Global using ValidatorBehaviour
 public class HasAccountWithCounterPartyValidator : AbstractValidator<HasAccountWithCounterPartyCommand>
 {
     public HasAccountWithCounterPartyValidator()
