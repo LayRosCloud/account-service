@@ -1,7 +1,8 @@
-﻿using System.Net;
-using AccountService.Utils.Exceptions;
+﻿using AccountService.Utils.Exceptions;
 using AccountService.Utils.Result;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace AccountService.Utils.Middleware;
 
@@ -11,6 +12,7 @@ public class ExceptionMiddleware
     private const HttpStatusCode StatusCodeNotFound = HttpStatusCode.NotFound;
     private const HttpStatusCode StatusCodeBadRequest = HttpStatusCode.BadRequest;
     private const HttpStatusCode StatusCodeInternalServerError = HttpStatusCode.InternalServerError;
+    private const HttpStatusCode StatusCodeConflict = HttpStatusCode.Conflict;
 
     private readonly RequestDelegate _next;
 
@@ -34,6 +36,10 @@ public class ExceptionMiddleware
         {
             await HandleException(context, ex);
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            await HandleException(context, ex);
+        }
         catch (Exception ex)
         {
             await HandleException(context, ex);
@@ -48,6 +54,11 @@ public class ExceptionMiddleware
     private static async Task HandleException(HttpContext context, ValidationException ex)
     {
         await Handle(context, ex.Message, (int)StatusCodeBadRequest);
+    }
+
+    private static async Task HandleException(HttpContext context, DbUpdateConcurrencyException ex)
+    {
+        await Handle(context, ex.Message, (int)StatusCodeConflict);
     }
 
     private static async Task HandleException(HttpContext context, Exception ex)

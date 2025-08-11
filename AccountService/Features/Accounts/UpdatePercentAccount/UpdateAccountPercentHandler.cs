@@ -27,7 +27,6 @@ public class UpdateAccountPercentHandler : IRequestHandler<UpdateAccountPercentC
         CancellationToken cancellationToken)
     {
         var account = await _wrapper.Execute(_ => UpdateAsync(request, cancellationToken), cancellationToken);
-
         return _mapper.Map<AccountResponseShortDto>(account);
     }
 

@@ -38,10 +38,10 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .HasColumnName(DataConstants.Account.PercentColumn)
             .IsRequired(false);
         builder.Property(account => account.Version)
+            .HasColumnName(DataConstants.Account.VersionColumn)
             .IsRequired()
+            .ValueGeneratedOnAddOrUpdate()
             .IsRowVersion();
-
-
         builder.HasMany(account => account.AccountTransactions)
             .WithOne()
             .HasForeignKey(x => x.AccountId);

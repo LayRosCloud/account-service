@@ -18,7 +18,7 @@ public class FindByIdAccountInternalHandler : IRequestHandler<FindByIdAccountInt
 
     public async Task<Account> Handle(FindByIdAccountInternalQuery request, CancellationToken cancellationToken)
     {
-        var account = await _wrapper.Execute(_ => FindByIdAsync(request.AccountId), cancellationToken);
+        var account = await FindByIdAsync(request.AccountId);
         return account;
     }
 

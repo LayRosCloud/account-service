@@ -12,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 services.AddControllers();
 services.AddHttpContextAccessor();
-services.AddDbContextMigrations(builder.Configuration);
 
 services.AddCorsPolicy();
 services.AddLogging(loggingBuilder =>
@@ -21,13 +20,17 @@ services.AddLogging(loggingBuilder =>
 });
 
 services.AddScopedInjections();
-services.AddHangfire(config =>
+if (!builder.Environment.IsEnvironment("Testing"))
 {
-#pragma warning disable CS0618 // Type or member is obsolete
-    config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("Connect"));
-#pragma warning restore CS0618 // Type or member is obsolete
-});
-services.AddHangfireServer();
+    services.AddDbContextMigrations(builder.Configuration);
+    services.AddHangfire(config =>
+    {
+    #pragma warning disable CS0618 // Type or member is obsolete
+        config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("Connect"));
+    #pragma warning restore CS0618 // Type or member is obsolete
+    });
+    services.AddHangfireServer();
+}
 services.AddSwaggerGenAuthorization(builder.Configuration);
 services.AddAuthorization();
 services.SettingAuthorization(builder.Configuration);
@@ -44,13 +47,17 @@ services.AddApplicationProfiles();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
+    using var scope = app.Services.CreateScope();
     var service = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-    if (service.HasMigrationsToApplyUp())
-    {
-        service.MigrateUp();
-    }
+    service.MigrateUp();
+    app.UseHangfireDashboard();
+    var hangJob = scope.ServiceProvider.GetRequiredService<DailyPercentAddedToAccount>();
+    RecurringJob.AddOrUpdate(
+        "AccrueInterest",
+        () => hangJob.AccrueInterest(),
+        Cron.Daily);
 }
 app.UseCors(CorsConfigurationExtensions.CorsPolicy);
 app.UseStaticFiles();
@@ -62,16 +69,6 @@ app.UseSwaggerUI(options =>
     options.InjectStylesheet(path);
 });
 
-app.UseHangfireDashboard();
-using (var scope = app.Services.CreateScope())
-{
-    var service = scope.ServiceProvider.GetRequiredService<DailyPercentAddedToAccount>();
-    RecurringJob.AddOrUpdate(
-        "daily-transactions",
-        () => service.DailyPercentAsync(),
-        Cron.Daily);
-}
-
 
 app.UseAuthentication();
 
@@ -80,3 +77,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program {}

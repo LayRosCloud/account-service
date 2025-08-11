@@ -10,11 +10,11 @@ namespace AccountService.Features.Users;
 [ApiController]
 [Route("/users")]
 [Produces("application/json")]
-public class UserController : ControllerBase
+public class AccountController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UserController(IMediator mediator)
+    public AccountController(IMediator mediator)
     {
         _mediator = mediator;
     }

@@ -121,6 +121,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
+    
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountCommand command)
     {
         var account = await _mediator.Send(command);
@@ -138,11 +139,13 @@ public class AccountController : ControllerBase
     /// <response code="400">Account data is invalid</response>
     /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
+    /// <response code="409">Account will be changed</response>
     [HttpPatch("{accountId}/percent")]
     [Authorize]
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
+    [ProducesResponseType(typeof(MbError), 409)]
     public async Task<IActionResult> UpdatePercentAccount([FromBody] UpdateAccountPercentCommand percentCommand,
         Guid accountId)
     {
@@ -162,11 +165,13 @@ public class AccountController : ControllerBase
     /// <response code="400">Account data is invalid</response>
     /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
+    /// <response code="409">Account will be changed</response>
     [HttpPatch("{accountId}/type")]
     [Authorize]
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
+    [ProducesResponseType(typeof(MbError), 409)]
     public async Task<IActionResult> UpdateTypeAccount([FromBody] UpdateTypeAccountCommand typeCommand,
         Guid accountId)
     {
@@ -186,11 +191,13 @@ public class AccountController : ControllerBase
     /// <response code="400">AccountId is empty or bad format UUID</response>
     /// <response code="401">Unauthorized</response>
     /// <response code="404">Account or other field with id is not found</response>
+    /// <response code="409">Account will be changed</response>
     [HttpDelete("{accountId}")]
     [Authorize]
     [ProducesResponseType(typeof(MbResponse<Unit>), 200)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
+    [ProducesResponseType(typeof(MbError), 409)]
     public async Task<IActionResult> DeleteAccount([SwaggerParameter("account id", Required = true)] Guid accountId)
     {
         var command = new DeleteAccountCommand(accountId);
