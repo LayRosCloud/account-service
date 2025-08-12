@@ -27,6 +27,7 @@ public class InitializeSchema : Migration
                 NEW.""" + DataConstants.Account.VersionColumn + @""" = OLD.""" + DataConstants.Account.VersionColumn + @""" + 1;
                 RETURN NEW;
             END;
+            $$ LANGUAGE plpgsql;
         ");
         // ReSharper disable once UseRawString
         Execute.Sql(@"
