@@ -43,7 +43,7 @@ public class FindByIdAccountExtractTests : AccountTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         //Assert
-        Assert.Equal(3, result.Transactions.Count);
+        Assert.Equal(6, result.Transactions.Count);
     }
 
     [Fact]
@@ -79,6 +79,6 @@ public class FindByIdAccountExtractTests : AccountTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         //Assert
-        Assert.Equal(3, result.Transactions.Count);
+        Assert.Equal(6, result.Transactions.Count);
     }
 }
