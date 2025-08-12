@@ -43,11 +43,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .ValueGeneratedOnAddOrUpdate()
             .IsRowVersion();
         builder.HasMany(account => account.AccountTransactions)
-            .WithOne()
+            .WithOne(x => x.Account)
             .HasForeignKey(x => x.AccountId);
 
         builder.HasMany(account => account.CounterPartyTransactions)
-            .WithOne()
+            .WithOne(x => x.CounterPartyAccount)
             .HasForeignKey(x => x.CounterPartyAccountId);
     }
 }

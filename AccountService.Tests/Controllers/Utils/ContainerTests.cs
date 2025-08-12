@@ -20,11 +20,11 @@ public class ContainerTests<TDbContext> : IAsyncLifetime, IDisposable where TDbC
         .WithCleanUp(true)
         .Build();
 
-    private WebApplicationFactory<Program> _factory;
-    private IServiceScope _scope;
+    private WebApplicationFactory<Program>? _factory;
+    private IServiceScope? _scope;
 
 
-    public IServiceProvider Services => _factory.Services;
+    public IServiceProvider Services => _factory?.Services!;
 
     public async Task InitializeAsync()
     {
@@ -70,19 +70,19 @@ public class ContainerTests<TDbContext> : IAsyncLifetime, IDisposable where TDbC
     public async Task DisposeAsync()
     {
         _scope?.Dispose();
-        await _factory.DisposeAsync();
+        await _factory!.DisposeAsync();
         await _dbContainer.DisposeAsync();
     }
 
     public HttpClient CreateClient()
     {
-        return _factory.CreateClient();
+        return _factory!.CreateClient();
     }
 
     public void Dispose()
     {
         _dbContainer.DisposeAsync().AsTask();
-        _factory.Dispose();
-        _scope.Dispose();
+        _factory!.Dispose();
+        _scope!.Dispose();
     }
 }

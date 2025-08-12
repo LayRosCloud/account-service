@@ -27,7 +27,6 @@ public class InitializeSchema : Migration
                 NEW.""" + DataConstants.Account.VersionColumn + @""" = OLD.""" + DataConstants.Account.VersionColumn + @""" + 1;
                 RETURN NEW;
             END;
-            $$ LANGUAGE plpgsql;
         ");
         // ReSharper disable once UseRawString
         Execute.Sql(@"
@@ -37,15 +36,30 @@ public class InitializeSchema : Migration
             EXECUTE FUNCTION update_version();
         ");
         Create.Table(DataConstants.Transaction.TableName)
-            .WithColumn(DataConstants.Transaction.IdColumn).AsGuid().PrimaryKey()
-            .WithColumn(DataConstants.Transaction.AccountIdColumn).AsGuid()
+            .WithColumn(DataConstants.Transaction.IdColumn)
+            .AsGuid()
+            .PrimaryKey()
+            .WithColumn(DataConstants.Transaction.AccountIdColumn)
+            .AsGuid()
             .NotNullable()
-            .WithColumn(DataConstants.Transaction.CounterPartyIdColumn).AsGuid().Nullable()
-            .WithColumn(DataConstants.Transaction.AmountColumn).AsDecimal().NotNullable()
-            .WithColumn(DataConstants.Transaction.DescriptionColumn).AsString(255).NotNullable()
-            .WithColumn(DataConstants.Transaction.TypeColumn).AsInt16().NotNullable()
-            .WithColumn(DataConstants.Transaction.CreatedAtColumn).AsDateTimeOffset().NotNullable()
-            .WithColumn(DataConstants.Transaction.CurrencyColumn).AsString(3).NotNullable();
+            .WithColumn(DataConstants.Transaction.CounterPartyIdColumn)
+            .AsGuid()
+            .Nullable()
+            .WithColumn(DataConstants.Transaction.AmountColumn)
+            .AsDecimal()
+            .NotNullable()
+            .WithColumn(DataConstants.Transaction.DescriptionColumn)
+            .AsString(255)
+            .NotNullable()
+            .WithColumn(DataConstants.Transaction.TypeColumn)
+            .AsInt16()
+            .NotNullable()
+            .WithColumn(DataConstants.Transaction.CreatedAtColumn)
+            .AsDateTimeOffset()
+            .NotNullable()
+            .WithColumn(DataConstants.Transaction.CurrencyColumn)
+            .AsString(3)
+            .NotNullable();
 
         Create.ForeignKey($"fk_{DataConstants.Transaction.TableName}_{DataConstants.Account.TableName}_accountId")
             .FromTable(DataConstants.Transaction.TableName).ForeignColumn(DataConstants.Transaction.AccountIdColumn)
@@ -75,10 +89,10 @@ public class InitializeSchema : Migration
     public override void Down()
     {
         Execute.Sql(@"DROP TRIGGER IF EXISTS accounts_version_trigger ON """ + DataConstants.Account.TableName + @""";");
-        Execute.Sql(@"DROP FUNCTION IF EXISTS update_version();");
-        Execute.Sql(@"DROP INDEX IF EXISTS ix_accounts_owner_id_hash;");
-        Execute.Sql(@"DROP INDEX IF EXISTS ix_transactions_account_id_date;");
-        Execute.Sql(@"DROP INDEX IF EXISTS ix_transactions_created_at_gist;");
+        Execute.Sql("DROP FUNCTION IF EXISTS update_version();");
+        Execute.Sql("DROP INDEX IF EXISTS ix_accounts_owner_id_hash;");
+        Execute.Sql("DROP INDEX IF EXISTS ix_transactions_account_id_date;");
+        Execute.Sql("DROP INDEX IF EXISTS ix_transactions_created_at_gist;");
         Delete.FromTable(DataConstants.Account.TableName);
         Delete.FromTable(DataConstants.Transaction.TableName);
     }

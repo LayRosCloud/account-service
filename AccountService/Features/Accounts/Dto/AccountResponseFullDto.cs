@@ -37,11 +37,13 @@ public class AccountResponseFullDto
     /// <summary>
     /// Created date account
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>
     /// Closed date account
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public DateTimeOffset? ClosedAt { get; set; }
 
     /// <summary>

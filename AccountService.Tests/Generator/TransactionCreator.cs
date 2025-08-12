@@ -22,7 +22,7 @@ public class TransactionCreator
             Description = description,
             CounterPartyAccountId = accountCounterParty?.Id
         };
-        account.Transactions.Add(transaction);
+        account.AccountTransactions.Add(transaction);
         return transaction;
     }
 

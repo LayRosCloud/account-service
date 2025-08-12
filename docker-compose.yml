@@ -27,6 +27,6 @@ services:
       - 'POSTGRES_USER=admin'
       - 'POSTGRES_DB=account_base'
     volumes:
-     - postgres_data:/var/lib/postgresql/data
+     - ./postgres-data:/var/lib/postgresql/data
     ports:
     - '5432:5432'

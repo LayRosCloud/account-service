@@ -4,6 +4,6 @@ public static class TimeUtils
 {
     public static DateTimeOffset GetTicksFromCurrentDate()
     {
-        return DateTimeOffset.Now;
+        return DateTimeOffset.UtcNow;
     }
 }

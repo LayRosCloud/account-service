@@ -1,4 +1,5 @@
-﻿using AccountService.Utils.Data;
+﻿using AccountService.Features.Accounts;
+using AccountService.Utils.Data;
 
 namespace AccountService.Features.Transactions;
 
@@ -12,4 +13,6 @@ public class Transaction: IDateCreator
     public TransactionType Type { get; set; }
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset CreatedAt { get; set; }
+    public virtual Account? Account { get; set; }
+    public virtual Account? CounterPartyAccount { get; set; }
 }

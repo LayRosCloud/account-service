@@ -1,14 +1,14 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.Dto;
+using AccountService.Features.Accounts.UpdatePercentAccount;
 using AccountService.Tests.Asserts;
+using AccountService.Tests.Controllers.Utils;
 using AccountService.Tests.Generator;
 using AccountService.Utils.Data;
 using AccountService.Utils.Result;
-using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
-using AccountService.Features.Accounts.UpdatePercentAccount;
-using AccountService.Tests.Controllers.Utils;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AccountService.Tests.Controllers;
 
@@ -121,7 +121,7 @@ public class AccountControllerTests : IClassFixture<ContainerTests<DatabaseConte
         var account = AccountCreator.CreateAccount(accountId, Guid.NewGuid(), createdAt: DateTimeOffset.UtcNow, type: AccountType.Credit);
         await ctx.Accounts.AddAsync(account);
         await ctx.SaveChangesAsync();
-        var content = JsonContent.Create(new UpdateAccountPercentCommand() {Id = accountId, Percent = null});
+        var content = JsonContent.Create(new UpdateAccountPercentCommand() { Id = accountId, Percent = null });
         //Act
         var result = await client.PatchAsync($"/accounts/{accountId}/percent", content);
 

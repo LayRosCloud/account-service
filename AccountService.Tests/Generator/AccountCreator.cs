@@ -11,7 +11,7 @@ public class AccountCreator
     {
         var account = CreateAccount(id, ownerId, balance, createdAt, closedAt, currency, percent, type);
         for (var i = 0; i < transactionsIds.Length; i++)
-            account.Transactions.Add(TransactionCreator.CreateTransaction(Guid.NewGuid(), account));
+            account.AccountTransactions.Add(TransactionCreator.CreateTransaction(Guid.NewGuid(), account));
         return account;
     }
 
