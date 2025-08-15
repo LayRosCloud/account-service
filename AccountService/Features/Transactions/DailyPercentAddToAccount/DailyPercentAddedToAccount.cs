@@ -18,7 +18,7 @@ public class DailyPercentAddedToAccount
         _storage = storage;
     }
 
-    public async Task DailyPercentAsync()
+    public async Task AccrueInterest()
     {
         var accounts = await _accountRepository.FindAllByPercentNotNullAndNotClosedAtAsync();
         var list = new List<Transaction>();

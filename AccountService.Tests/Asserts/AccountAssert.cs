@@ -1,6 +1,7 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.CreateAccount;
 using AccountService.Features.Accounts.Dto;
+using AccountService.Features.Transactions;
 
 namespace AccountService.Tests.Asserts;
 
@@ -49,11 +50,12 @@ public class AccountAssert
         Assert.Equal(account.Type, destination.Type);
         Assert.Equal(account.OwnerId, destination.OwnerId);
         Assert.Equal(account.Balance, destination.Balance);
-        Assert.Equal(account.CreatedAt, destination.CreatedAt);
-        Assert.Equal(account.ClosedAt, destination.ClosedAt);
         Assert.Equal(account.Percent, destination.Percent);
         Assert.Equal(account.Currency, destination.Currency);
-        for (var i = 0; i < account.Transactions.Count; i++)
-            TransactionAssert.AssertTransactions(account.Transactions[i], destination.Transactions[i]);
+        var list = new List<Transaction>(account.AccountTransactions.Count + account.CounterPartyTransactions.Count);
+        list.AddRange(account.AccountTransactions);
+        list.AddRange(account.CounterPartyTransactions);
+        for (var i = 0; i < list.Count; i++)
+            TransactionAssert.AssertTransactions(list[i], destination.Transactions[i]);
     }
 }

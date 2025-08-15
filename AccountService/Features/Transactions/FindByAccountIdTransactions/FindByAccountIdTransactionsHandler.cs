@@ -36,7 +36,9 @@ public class FindByAccountIdTransactionsHandler :
 
         if (account == null)
             throw ExceptionUtils.GetNotFoundException("account", request.AccountId);
-
-        return account.Transactions.ToList();
+        var list = new List<Transaction>(account.AccountTransactions.Count + account.CounterPartyTransactions.Count);
+        list.AddRange(account.AccountTransactions);
+        list.AddRange(account.CounterPartyTransactions);
+        return list;
     }
 }

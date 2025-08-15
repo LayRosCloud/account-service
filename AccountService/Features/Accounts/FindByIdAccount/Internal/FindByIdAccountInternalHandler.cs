@@ -1,5 +1,4 @@
-﻿using AccountService.Utils.Data;
-using AccountService.Utils.Exceptions;
+﻿using AccountService.Utils.Exceptions;
 using MediatR;
 
 namespace AccountService.Features.Accounts.FindByIdAccount.Internal;
@@ -7,18 +6,16 @@ namespace AccountService.Features.Accounts.FindByIdAccount.Internal;
 // ReSharper disable once UnusedMember.Global using Mediator
 public class FindByIdAccountInternalHandler : IRequestHandler<FindByIdAccountInternalQuery, Account>
 {
-    private readonly ITransactionWrapper _wrapper;
     private readonly IAccountRepository _repository;
 
-    public FindByIdAccountInternalHandler(ITransactionWrapper wrapper, IAccountRepository repository)
+    public FindByIdAccountInternalHandler(IAccountRepository repository)
     {
-        _wrapper = wrapper;
         _repository = repository;
     }
 
     public async Task<Account> Handle(FindByIdAccountInternalQuery request, CancellationToken cancellationToken)
     {
-        var account = await _wrapper.Execute(_ => FindByIdAsync(request.AccountId), cancellationToken);
+        var account = await FindByIdAsync(request.AccountId);
         return account;
     }
 

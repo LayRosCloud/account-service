@@ -20,7 +20,7 @@ public class FindByIdAccountInternalTests : AccountTests
             .ReturnsAsync(account);
 
         var command = new FindByIdAccountInternalQuery(id);
-        var handler = new FindByIdAccountInternalHandler(TransactionWrapperMock.Object, AccountRepositoryMock.Object);
+        var handler = new FindByIdAccountInternalHandler(AccountRepositoryMock.Object);
 
         SetupTransaction<Account>(TransactionWrapperMock);
 
@@ -37,7 +37,7 @@ public class FindByIdAccountInternalTests : AccountTests
     {
         //Arrange
         var command = new FindByIdAccountInternalQuery(Guid.Empty);
-        var handler = new FindByIdAccountInternalHandler(TransactionWrapperMock.Object, AccountRepositoryMock.Object);
+        var handler = new FindByIdAccountInternalHandler(AccountRepositoryMock.Object);
         SetupTransaction<Account>(TransactionWrapperMock);
 
         //Act

@@ -5,12 +5,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AccountService.Utils.Data;
 
-public interface IStorageContext
+public interface IStorageContext : IDisposable
 {
-    public DbSet<Account> Accounts { get; }
-    public DbSet<Transaction> Transactions { get; }
+    public DbSet<Account> Accounts { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
-    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
-    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

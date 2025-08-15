@@ -25,6 +25,7 @@ public class KeyCloakClient : IKeyCloakClient
         _endpointToken = $"{host}/realms/{realm}/protocol/openid-connect/token";
     }
 
+
     public async Task<List<User>?> GetAllUsers()
     {
         var token = await GetTokenAndValidate();
@@ -39,6 +40,20 @@ public class KeyCloakClient : IKeyCloakClient
         using var client = GetHttpClient(token.TokenType, token.AccessToken);
         var user = await client.GetFromJsonAsync<User>($"{_endpointUserFind}/{id}");
         return user;
+    }
+    public async Task<KeyCloakToken?> GetTokenFromCacheAsync()
+    {
+        var token = await _cache.GetOrCreateAsync(KeyToken, async _ => await SendRequestToKeyCloak());
+        var expiredDate = token!.CreatedAt.AddSeconds(token.ExpiresIn);
+
+        // ReSharper disable once InvertIf The code looks less confusing.
+        if (DateTime.UtcNow >= expiredDate)
+        {
+            token = await SendRequestToKeyCloak();
+            _cache.Set(KeyToken, token);
+        }
+
+        return token;
     }
 
     private static HttpClient GetHttpClient(string scheme, string accessToken)
@@ -56,20 +71,7 @@ public class KeyCloakClient : IKeyCloakClient
         return token;
     }
 
-    private async Task<KeyCloakToken?> GetTokenFromCacheAsync()
-    {
-        var token = await _cache.GetOrCreateAsync(KeyToken, async _ => await SendRequestToKeyCloak());
-        var expiredDate = token!.CreatedAt.AddSeconds(token.ExpiresIn);
-
-        // ReSharper disable once InvertIf The code looks less confusing.
-        if (DateTime.UtcNow >= expiredDate)
-        {
-            token = await SendRequestToKeyCloak();
-            _cache.Set(KeyToken, token);
-        } 
-
-        return token;
-    }
+    
 
     private async Task<KeyCloakToken?> SendRequestToKeyCloak()
     {

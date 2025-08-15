@@ -7,11 +7,17 @@ public class AccountCreator
 {
     public static Account CreateAccountWithTransaction(Guid id, Guid ownerId, Guid[] transactionsIds, decimal balance = 0, DateTimeOffset createdAt = new(),
         DateTimeOffset? closedAt = null, string currency = "RUB", decimal? percent = null,
-        AccountType type = AccountType.Deposit)
+        AccountType type = AccountType.Deposit, bool isAccountTransactions = true)
     {
         var account = CreateAccount(id, ownerId, balance, createdAt, closedAt, currency, percent, type);
         for (var i = 0; i < transactionsIds.Length; i++)
-            account.Transactions.Add(TransactionCreator.CreateTransaction(Guid.NewGuid(), account));
+        {
+            if (isAccountTransactions)
+                account.AccountTransactions.Add(TransactionCreator.CreateTransaction(Guid.NewGuid(), account));
+            else
+                account.AccountTransactions.Add(TransactionCreator.CreateTransaction(Guid.NewGuid(), account));
+        }
+            
         return account;
     }
 

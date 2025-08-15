@@ -14,12 +14,15 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .IsRequired()
             .HasColumnName(DataConstants.Transaction.IdColumn);
         builder.HasKey(transaction => transaction.Id);
+
         builder.Property(transaction => transaction.AccountId)
             .IsRequired()
             .HasColumnName(DataConstants.Transaction.AccountIdColumn);
+
         builder.Property(transaction => transaction.CounterPartyAccountId)
             .IsRequired(false)
             .HasColumnName(DataConstants.Transaction.CounterPartyIdColumn);
+
         builder.Property(transaction => transaction.CreatedAt)
             .IsRequired()
             .HasColumnName(DataConstants.Transaction.CreatedAtColumn)
@@ -38,5 +41,15 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(transaction => transaction.Type)
             .HasColumnName(DataConstants.Transaction.TypeColumn)
             .IsRequired();
+        builder.HasOne(t => t.Account)
+            .WithMany(a => a.AccountTransactions)
+            .HasForeignKey(t => t.AccountId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(t => t.CounterPartyAccount)
+            .WithMany(a => a.CounterPartyTransactions)
+            .HasForeignKey(t => t.CounterPartyAccountId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

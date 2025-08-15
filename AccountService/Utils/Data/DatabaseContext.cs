@@ -8,10 +8,11 @@ namespace AccountService.Utils.Data;
 
 public class DatabaseContext : DbContext, IStorageContext
 {
+    
     public DatabaseContext(DbContextOptions options) : base(options) { }
 
-    public DbSet<Account> Accounts { get; } = null!;
-    public DbSet<Transaction> Transactions { get; } = null!;
+    public DbSet<Account> Accounts { get; set; } = null!;
+    public DbSet<Transaction> Transactions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,15 +24,4 @@ public class DatabaseContext : DbContext, IStorageContext
     {
         return Database.BeginTransactionAsync(cancellationToken);
     }
-
-    public Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        return Database.RollbackTransactionAsync(cancellationToken);
-    }
-
-    public Task CommitTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        return Database.CommitTransactionAsync(cancellationToken);
-    }
-
 }

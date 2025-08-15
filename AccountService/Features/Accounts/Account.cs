@@ -13,8 +13,7 @@ public class Account : ICloneable, IDateCreator
     public decimal? Percent { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ClosedAt { get; set; }
-    public byte[]? Version { get; set; }
-    public IList<Transaction> Transactions => AccountTransactions.Concat(CounterPartyTransactions).ToList();
+    public long Version { get; set; }
     public List<Transaction> AccountTransactions { get; } = new();
     public List<Transaction> CounterPartyTransactions { get; } = new();
 
