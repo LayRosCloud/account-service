@@ -8,6 +8,7 @@ using AccountService.Utils.Data;
 using AccountService.Utils.Result;
 using System.Net;
 using System.Net.Http.Json;
+using Broker.AccountService;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AccountService.Tests.Controllers;

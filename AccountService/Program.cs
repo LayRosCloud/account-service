@@ -4,6 +4,7 @@ using FluentValidation;
 using System.Reflection;
 using AccountService.Features.Transactions.DailyPercentAddToAccount;
 using AccountService.Utils.Extensions.Configuration;
+using Broker.Handlers;
 using FluentMigrator.Runner;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -12,7 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 services.AddControllers();
 services.AddHttpContextAccessor();
-
 services.AddCorsPolicy();
 services.AddLogging(loggingBuilder =>
 {
@@ -46,6 +46,7 @@ services.AddApplicationProfiles();
 
 var app = builder.Build();
 
+app.UseMiddleware<CorrelationMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 if (!app.Environment.IsEnvironment("Testing"))
 {
@@ -71,8 +72,9 @@ app.UseSwaggerUI(options =>
 
 
 app.UseAuthentication();
-
 app.UseAuthorization();
+
+app.UseMiddleware<LoggerMiddleware>();
 
 app.MapControllers();
 

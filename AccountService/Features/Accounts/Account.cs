@@ -1,5 +1,6 @@
 ﻿using AccountService.Features.Transactions;
 using AccountService.Utils.Data;
+using Broker.AccountService;
 
 namespace AccountService.Features.Accounts;
 

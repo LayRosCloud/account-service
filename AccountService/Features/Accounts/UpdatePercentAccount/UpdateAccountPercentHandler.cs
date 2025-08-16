@@ -2,6 +2,7 @@
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AutoMapper;
+using Broker.AccountService;
 using FluentValidation;
 using MediatR;
 

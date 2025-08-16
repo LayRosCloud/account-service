@@ -1,5 +1,6 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.CreateAccount;
+using Broker.AccountService;
 
 namespace AccountService.Tests.Generator;
 

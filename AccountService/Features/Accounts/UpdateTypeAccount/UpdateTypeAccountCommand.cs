@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using AccountService.Features.Accounts.Dto;
+using Broker.AccountService;
 using MediatR;
 
 namespace AccountService.Features.Accounts.UpdateTypeAccount;

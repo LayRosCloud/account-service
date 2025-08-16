@@ -15,10 +15,12 @@ public class ExceptionMiddleware
     private const HttpStatusCode StatusCodeConflict = HttpStatusCode.Conflict;
 
     private readonly RequestDelegate _next;
+    private readonly ILogger _logger;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionMiddleware(RequestDelegate next, ILogger logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     // ReSharper disable once UnusedMember.Global using ASP.NET middleware before request
@@ -46,30 +48,36 @@ public class ExceptionMiddleware
         }
     }
 
-    private static async Task HandleException(HttpContext context, NotFoundException ex)
+    private async Task HandleException(HttpContext context, NotFoundException ex)
     {
-        await Handle(context, ex.Message, (int)StatusCodeNotFound);
+        await Handle(context, ex, (int)StatusCodeNotFound);
     }
 
-    private static async Task HandleException(HttpContext context, ValidationException ex)
+    private async Task HandleException(HttpContext context, ValidationException ex)
     {
-        await Handle(context, ex.Message, (int)StatusCodeBadRequest);
+        await Handle(context, ex, (int)StatusCodeBadRequest);
     }
 
-    private static async Task HandleException(HttpContext context, DbUpdateConcurrencyException ex)
+    private async Task HandleException(HttpContext context, DbUpdateConcurrencyException ex)
     {
-        await Handle(context, ex.Message, (int)StatusCodeConflict);
+        await Handle(context, ex, (int)StatusCodeConflict);
     }
 
-    private static async Task HandleException(HttpContext context, Exception ex)
+    private async Task HandleException(HttpContext context, Exception ex)
     {
-        await Handle(context, ex.Message, (int)StatusCodeInternalServerError);
+        await Handle(context, ex, (int)StatusCodeInternalServerError);
     }
 
-    private static async Task Handle(HttpContext context, string message, int code)
+    private async Task Handle(HttpContext context, Exception exception, int code)
     {
+        var logLevel = code < 500 ? LogLevel.Error : LogLevel.Critical;
+        var requestId = (string)context.Items["X-Correlation-ID"]!;
+        var causationId = (string)context.Items["X-Causation-ID"]!;
+
+        _logger.Log(logLevel, exception, "requestId: {requestId}; causationId: {causationId}", requestId, causationId);
+        
         context.Response.ContentType = HeaderApplicationJson;
         context.Response.StatusCode = code;
-        await context.Response.WriteAsJsonAsync(new MbError(code, message));
+        await context.Response.WriteAsJsonAsync(new MbError(code, exception.Message));
     }
 }

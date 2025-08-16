@@ -1,9 +1,14 @@
-﻿using AccountService.Features.Accounts;
+﻿using AccountService.Broker;
+using AccountService.Broker.Account;
+using AccountService.Broker.Transaction;
+using AccountService.Features.Accounts;
 using AccountService.Features.Transactions;
 using AccountService.Features.Transactions.DailyPercentAddToAccount;
 using AccountService.Features.Transactions.Utils.Transfer;
 using AccountService.Features.Users.Utils;
 using AccountService.Utils.Data;
+using Broker.AccountService;
+using Broker.Handlers;
 
 namespace AccountService.Utils.Extensions.Configuration;
 
@@ -18,6 +23,11 @@ public static class ScopeConfigurationExtensions
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<DailyPercentAddedToAccount>();
+        services.AddSingleton<IConnectionBroker, RabbitMqConnection>();
+        services.AddScoped<IMessageProducer, RabbitMqProducer>();
+        services.AddScoped<IProducer<AccountOpenedEvent>, AccountProducer>();
+        services.AddScoped<ITransactionProducer, TransactionProducer>();
+        services.AddScoped<IProducer<TransferCompletedEvent>, TransactionProducer>();
 
         return services;
     }

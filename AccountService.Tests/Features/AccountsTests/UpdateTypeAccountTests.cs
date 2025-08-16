@@ -3,6 +3,7 @@ using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AccountService.Features.Accounts.UpdateTypeAccount;
 using AccountService.Tests.Asserts;
 using AccountService.Tests.Generator;
+using Broker.AccountService;
 using FluentValidation;
 using MediatR;
 using Moq;

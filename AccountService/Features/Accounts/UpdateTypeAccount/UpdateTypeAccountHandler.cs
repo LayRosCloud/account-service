@@ -2,6 +2,7 @@
 using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AccountService.Utils.Data;
 using AutoMapper;
+using Broker.AccountService;
 using FluentValidation;
 using MediatR;
 
