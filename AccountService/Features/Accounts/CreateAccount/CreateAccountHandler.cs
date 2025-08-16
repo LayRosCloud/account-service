@@ -19,9 +19,9 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, Accoun
     private readonly IMediator _mediator;
     private readonly IAccountRepository _repository;
     private readonly IProducer<AccountOpenedEvent> _producer;
-    private readonly HttpContext _context;
+    private readonly IHttpContextAccessor _context;
 
-    public CreateAccountHandler(IMapper mapper, IMediator mediator, IStorageContext storage, IAccountRepository repository, ITransactionWrapper wrapper, HttpContext context, IProducer<AccountOpenedEvent> producer)
+    public CreateAccountHandler(IMapper mapper, IMediator mediator, IStorageContext storage, IAccountRepository repository, ITransactionWrapper wrapper, IHttpContextAccessor context, IProducer<AccountOpenedEvent> producer)
     {
         _mapper = mapper;
         _mediator = mediator;
@@ -61,7 +61,7 @@ public class CreateAccountHandler : IRequestHandler<CreateAccountCommand, Accoun
 
     private async Task ProduceAccountAsync(Account account)
     {
-        var correlation = (string)_context.Items["X-Correlation-ID"]!;
+        var correlation = (string)_context.HttpContext!.Items["X-Correlation-ID"]!;
         var meta = MetaCreator.Create(Guid.Parse(correlation), 
             MetaCreator.AccountCreate);
         var accountEvent = new AccountOpenedEvent(Guid.NewGuid(), DateTime.UtcNow, meta, account.Currency)

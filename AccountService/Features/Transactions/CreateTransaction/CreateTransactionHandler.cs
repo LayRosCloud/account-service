@@ -20,9 +20,9 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
     private readonly IAccountRepository _accountRepository;
     private readonly ITransactionWrapper _wrapper;
     private readonly ITransactionProducer _producer;
-    private readonly HttpContext _context;
+    private readonly IHttpContextAccessor _context;
 
-    public CreateTransactionHandler(IMapper mapper, IStorageContext storage, ITransactionRepository repository, IAccountRepository accountRepository, ITransactionWrapper wrapper, ITransactionProducer producer, HttpContext context)
+    public CreateTransactionHandler(IMapper mapper, IStorageContext storage, ITransactionRepository repository, IAccountRepository accountRepository, ITransactionWrapper wrapper, ITransactionProducer producer, IHttpContextAccessor context)
     {
         _mapper = mapper;
         _storage = storage;
@@ -72,7 +72,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
 
     private async Task ProduceAsync(Transaction transaction)
     {
-        var correlationId = (string)_context.Items["X-Correlation-ID"]!;
+        var correlationId = (string)_context.HttpContext!.Items["X-Correlation-ID"]!;
         var meta = MetaCreator.Create(Guid.Parse(correlationId), Guid.Parse("63fb0ed5-26f6-41c6-a8ef-726ab5cfa12c"));
 
         if (transaction.Type == TransactionType.Debit)

@@ -15,9 +15,9 @@ public class ExceptionMiddleware
     private const HttpStatusCode StatusCodeConflict = HttpStatusCode.Conflict;
 
     private readonly RequestDelegate _next;
-    private readonly ILogger _logger;
+    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger logger)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         _next = next;
         _logger = logger;
@@ -73,9 +73,7 @@ public class ExceptionMiddleware
         var logLevel = code < 500 ? LogLevel.Error : LogLevel.Critical;
         var requestId = (string)context.Items["X-Correlation-ID"]!;
         var causationId = (string)context.Items["X-Causation-ID"]!;
-
-        _logger.Log(logLevel, exception, "requestId: {requestId}; causationId: {causationId}", requestId, causationId);
-        
+        _logger.Log(logLevel, exception, "requestId: {requestId}, causationId: {causationId}", requestId, causationId);
         context.Response.ContentType = HeaderApplicationJson;
         context.Response.StatusCode = code;
         await context.Response.WriteAsJsonAsync(new MbError(code, exception.Message));

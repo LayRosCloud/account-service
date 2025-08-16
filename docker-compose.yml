@@ -3,11 +3,12 @@ services:
     build:
       context: .
       dockerfile: AccountService/Dockerfile
+    restart: always
     ports:
     - '80:8080'
     depends_on:
     - keycloak
-    - postgressql
+    - postgres_account
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:latest
@@ -20,8 +21,8 @@ services:
     - ././containers/identity:/opt/keycloak/data
     ports:
     - '18000:8080'
-  postgressql:
-    container_name: postgres
+  postgres_account:
+    container_name: postgres_account
     image: postgres:16.2
     environment:
       - 'POSTGRES_PASSWORD=admin'

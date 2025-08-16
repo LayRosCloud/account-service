@@ -19,7 +19,11 @@ public class CorrelationMiddleware
 
         context.Items["X-Correlation-ID"] = correlation;
         context.Items["X-Causation-ID"] = causation;
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.Append("X-Correlation-ID", correlation);
+            return Task.CompletedTask;
+        });
         await _next(context);
-        context.Response.Headers["X-Correlation-ID"] = correlation;
     }
 }

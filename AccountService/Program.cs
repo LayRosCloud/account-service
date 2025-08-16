@@ -4,7 +4,6 @@ using FluentValidation;
 using System.Reflection;
 using AccountService.Features.Transactions.DailyPercentAddToAccount;
 using AccountService.Utils.Extensions.Configuration;
-using Broker.Handlers;
 using FluentMigrator.Runner;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -35,6 +34,7 @@ services.AddSwaggerGenAuthorization(builder.Configuration);
 services.AddAuthorization();
 services.SettingAuthorization(builder.Configuration);
 services.AddMemoryCache();
+services.AddLogging();
 services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 services.AddMediatR(options =>
 {
@@ -73,8 +73,6 @@ app.UseSwaggerUI(options =>
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseMiddleware<LoggerMiddleware>();
 
 app.MapControllers();
 

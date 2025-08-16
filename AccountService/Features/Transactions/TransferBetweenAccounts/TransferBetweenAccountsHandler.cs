@@ -22,9 +22,9 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
     private readonly ITransactionRepository _repository;
     private readonly ITransactionWrapper _wrapper;
     private readonly IProducer<TransferCompletedEvent> _producer;
-    private readonly HttpContext _context;
+    private readonly IHttpContextAccessor _context;
 
-    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IStorageContext storage, ITransferFactory factory, IAccountRepository accountRepository, ITransactionRepository repository, ITransactionWrapper wrapper, IProducer<TransferCompletedEvent> producer, HttpContext context)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IStorageContext storage, ITransferFactory factory, IAccountRepository accountRepository, ITransactionRepository repository, ITransactionWrapper wrapper, IProducer<TransferCompletedEvent> producer, IHttpContextAccessor context)
     {
         _mapper = mapper;
         _mediator = mediator;
@@ -78,7 +78,7 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
 
     private async Task ProduceAsync(Transaction transaction)
     {
-        var correlationId = (string)_context.Items["X-Correlation-ID"]!;
+        var correlationId = (string)_context.HttpContext!.Items["X-Correlation-ID"]!;
         var meta = MetaCreator.Create(Guid.Parse(correlationId), 
             Guid.Parse("5c14fbc7-77ce-498a-9256-1fef596e9125"));
         var transferEvent = new TransferCompletedEvent(Guid.NewGuid(), DateTime.UtcNow, meta, transaction.Currency)
