@@ -8,7 +8,7 @@ using RabbitMQ.Client.Events;
 
 namespace AccountService.Broker.Client;
 
-public class ClientConsumer
+public class ClientConsumer : IAsyncDisposable
 {
     private readonly IChannel _channel;
     private readonly IEventRepository _repository;
