@@ -17,6 +17,11 @@ public class AccountRepository : IAccountRepository
         return await _storage.Accounts.ToListAsync();
     }
 
+    public async Task<IList<Account>> FindAllByOwnerIdAsync(Guid ownerId)
+    {
+        return await _storage.Accounts.Where(x => x.OwnerId == ownerId).ToListAsync();
+    }
+
     public async Task<bool> HasAccountAndOwnerAsync(Guid accountId, Guid ownerId)
     {
         return await _storage.Accounts.AnyAsync(x => x.Id == accountId && x.OwnerId == ownerId);
@@ -46,9 +51,14 @@ public class AccountRepository : IAccountRepository
         return result.Entity;
     }
 
+    public void UpdateRange(IEnumerable<Account> account)
+    {
+        _storage.Accounts.UpdateRange(account);
+    }
+
     public async Task<IList<Account>> FindAllByPercentNotNullAndNotClosedAtAsync()
     {
-        var result = await _storage.Accounts.Where(x => x.Percent.HasValue).ToListAsync();
+        var result = await _storage.Accounts.Where(x => x.Percent.HasValue && x.ClosedAt.HasValue).ToListAsync();
         return result;
     }
 }

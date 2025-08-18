@@ -1,10 +1,13 @@
-﻿using AccountService.Features.Accounts;
+﻿using AccountService.Broker;
+using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.CreateAccount;
 using AccountService.Features.Users.VerifyUser;
 using AccountService.Tests.Asserts;
 using AccountService.Tests.Generator;
 using AccountService.Utils.Exceptions;
+using Broker.AccountService;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace AccountService.Tests.Features.AccountsTests;
@@ -12,7 +15,8 @@ namespace AccountService.Tests.Features.AccountsTests;
 public class CreateAccountTests : AccountTests
 {
     private readonly Mock<IMediator> _mediator = new();
-
+    private readonly Mock<IHttpContextAccessor> _contextMock = new();
+    private readonly Mock<IProducer<AccountOpenedEvent>> _producerMock = new();
 
     [Fact]
     public async Task CreateAccount_ExistsOwner_Ok()
@@ -27,8 +31,11 @@ public class CreateAccountTests : AccountTests
         var token = CancellationToken.None;
         _mediator.Setup(x => x.Send(It.IsAny<VerifyUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-
-        var handler = new CreateAccountHandler(Mapper, _mediator.Object, StorageMock.Object, AccountRepositoryMock.Object, TransactionWrapperMock.Object);
+        _contextMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+        _contextMock.Setup(x => x.HttpContext!.Items["X-Correlation-ID"])
+            .Returns(Guid.NewGuid().ToString());
+        
+        var handler = new CreateAccountHandler(Mapper, _mediator.Object, StorageMock.Object, AccountRepositoryMock.Object, TransactionWrapperMock.Object, _contextMock.Object, _producerMock.Object);
 
         //Act
         var result = await handler.Handle(command, token);
@@ -52,7 +59,7 @@ public class CreateAccountTests : AccountTests
         _mediator.Setup(x => x.Send(It.IsAny<VerifyUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        var handler = new CreateAccountHandler(Mapper, _mediator.Object, StorageMock.Object, AccountRepositoryMock.Object, TransactionWrapperMock.Object);
+        var handler = new CreateAccountHandler(Mapper, _mediator.Object, StorageMock.Object, AccountRepositoryMock.Object, TransactionWrapperMock.Object, _contextMock.Object, _producerMock.Object);
 
         //Act
 

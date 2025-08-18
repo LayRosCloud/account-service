@@ -4,6 +4,7 @@ using AccountService.Utils.Result;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace AccountService.Features.Users;
 
@@ -34,7 +35,9 @@ public class UserController : ControllerBase
     {
         var command = new FindAllUsersQuery();
         var users = await _mediator.Send(command);
-        var result = ResultGenerator.Ok(users);
+        var enumerable = users!.ToArray();
+        var result = ResultGenerator.Ok(enumerable);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("59fb0957-e68b-42e1-a773-701491be6e47"));
         return Ok(result);
     }
 
@@ -54,6 +57,7 @@ public class UserController : ControllerBase
         var command = new VerifyUserCommand(accountId);
         var result = await _mediator.Send(command);
         var response = ResultGenerator.Ok(result);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("9ddba4d7-5820-4811-ae16-8ea32243cfce"));
         return Ok(response);
     }
 }

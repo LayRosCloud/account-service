@@ -2,6 +2,7 @@
 using AccountService.Features.Accounts.UpdatePercentAccount;
 using AccountService.Tests.Generator;
 using AccountService.Utils.Exceptions;
+using Broker.AccountService;
 using FluentValidation;
 using Moq;
 

@@ -1,4 +1,5 @@
 ﻿using AccountService.Features.Transactions.Dto;
+using Broker.AccountService;
 
 namespace AccountService.Features.Accounts.Dto;
 

@@ -1,9 +1,12 @@
-﻿using AccountService.Features.Accounts;
+﻿using AccountService.Broker;
+using AccountService.Features.Accounts;
 using AccountService.Features.Accounts.FindByIdAccount.Internal;
 using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.Utils.Transfer;
+using AccountService.Utils.Broker;
 using AccountService.Utils.Data;
 using AutoMapper;
+using Broker.AccountService;
 using MediatR;
 
 namespace AccountService.Features.Transactions.TransferBetweenAccounts;
@@ -18,8 +21,10 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
     private readonly IAccountRepository _accountRepository;
     private readonly ITransactionRepository _repository;
     private readonly ITransactionWrapper _wrapper;
+    private readonly IProducer<TransferCompletedEvent> _producer;
+    private readonly IHttpContextAccessor _context;
 
-    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IStorageContext storage, ITransferFactory factory, IAccountRepository accountRepository, ITransactionRepository repository, ITransactionWrapper wrapper)
+    public TransferBetweenAccountsHandler(IMapper mapper, IMediator mediator, IStorageContext storage, ITransferFactory factory, IAccountRepository accountRepository, ITransactionRepository repository, ITransactionWrapper wrapper, IProducer<TransferCompletedEvent> producer, IHttpContextAccessor context)
     {
         _mapper = mapper;
         _mediator = mediator;
@@ -28,12 +33,15 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
         _accountRepository = accountRepository;
         _repository = repository;
         _wrapper = wrapper;
+        _producer = producer;
+        _context = context;
     }
 
     public async Task<TransactionFullDto> Handle(TransferBetweenAccountsCommand request, CancellationToken cancellationToken)
     {
         var (transaction1, _) =
             await _wrapper.Execute(_ => CreateTransactions(request, cancellationToken), cancellationToken);
+        
         return _mapper.Map<TransactionFullDto>(transaction1);
     }
 
@@ -51,6 +59,7 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
 
         var (transactionFrom, transactionTo) = await transferHandler.SaveToDatabaseAsync(_repository);
         await _storage.SaveChangesAsync(cancellationToken);
+        await ProduceAsync(transactionFrom);
         return (transactionFrom, transactionTo);
     }
 
@@ -65,5 +74,20 @@ public class TransferBetweenAccountsHandler : IRequestHandler<TransferBetweenAcc
     {
         var query = new FindByIdAccountInternalQuery(id);
         return _mapper.Map<Account>(await _mediator.Send(query));
+    }
+
+    private async Task ProduceAsync(Transaction transaction)
+    {
+        var correlationId = (string)_context.HttpContext!.Items["X-Correlation-ID"]!;
+        var meta = MetaCreator.Create(Guid.Parse(correlationId), 
+            Guid.Parse("5c14fbc7-77ce-498a-9256-1fef596e9125"));
+        var transferEvent = new TransferCompletedEvent(Guid.NewGuid(), DateTime.UtcNow, meta, transaction.Currency)
+        {
+            Amount = transaction.Sum,
+            DestinationAccountId = transaction.CounterPartyAccountId!.Value,
+            SourceAccountId = transaction.AccountId,
+            TransferId = transaction.Id
+        };
+        await _producer.ProduceAsync(transferEvent);
     }
 }

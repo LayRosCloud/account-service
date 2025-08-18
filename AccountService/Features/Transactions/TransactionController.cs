@@ -42,6 +42,7 @@ public class TransactionController : ControllerBase
         var command = new FindByAccountIdTransactionsQuery(accountId);
         var transactions = await _mediator.Send(command);
         var result = ResultGenerator.Ok(transactions);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("e87eddd4-5fa8-4986-8be7-35d813fa5fe4"));
         return Ok(result);
     }
 
@@ -55,15 +56,19 @@ public class TransactionController : ControllerBase
     /// <response code="400">Object data is invalid</response>
     /// <response code="404">Object is not found</response>
     /// <response code="401">Unauthorized</response>
+    /// <response code="409">Conflict</response>
     [HttpPost]
     [Authorize]
     [ProducesResponseType(typeof(MbResponse<TransactionFullDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
+    [ProducesResponseType(typeof(MbError), 401)]
     [ProducesResponseType(typeof(MbError), 404)]
+    [ProducesResponseType(typeof(MbError), 409)]
     public async Task<IActionResult> CreateTransaction([FromBody] CreateTransactionCommand command)
     {
         var transaction = await _mediator.Send(command);
         var result = ResultGenerator.Create(transaction);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("63fb0ed5-26f6-41c6-a8ef-726ab5cfa12c"));
         return new ObjectResult(result) { StatusCode = 201 };
     }
 
@@ -77,16 +82,19 @@ public class TransactionController : ControllerBase
     /// <response code="400">Object data is invalid</response>
     /// <response code="404">Object is not found</response>
     /// <response code="401">Unauthorized</response>
+    /// <response code="409">Conflict</response>
     [HttpPost("transfer")]
     [Authorize]
     [ProducesResponseType(typeof(MbResponse<TransactionFullDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
+    [ProducesResponseType(typeof(MbError), 409)]
     public async Task<IActionResult> TransferBetweenAccounts([FromBody] TransferBetweenAccountsCommand command)
     {
         command.Type = TransactionType.Credit;
         var transaction = await _mediator.Send(command);
         var result = ResultGenerator.Create(transaction);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("5c14fbc7-77ce-498a-9256-1fef596e9125"));
         return new ObjectResult(result) { StatusCode = 201 };
     }
 }

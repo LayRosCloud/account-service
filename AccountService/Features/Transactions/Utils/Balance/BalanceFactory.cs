@@ -1,4 +1,5 @@
 ﻿using AccountService.Features.Accounts;
+using Broker.AccountService;
 
 namespace AccountService.Features.Transactions.Utils.Balance;
 

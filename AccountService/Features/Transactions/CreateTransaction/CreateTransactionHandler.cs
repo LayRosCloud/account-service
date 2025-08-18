@@ -1,9 +1,12 @@
-﻿using AccountService.Features.Accounts;
+﻿using AccountService.Broker;
+using AccountService.Features.Accounts;
 using AccountService.Features.Transactions.Dto;
 using AccountService.Features.Transactions.Utils.Balance;
+using AccountService.Utils.Broker;
 using AccountService.Utils.Data;
 using AccountService.Utils.Exceptions;
 using AutoMapper;
+using Broker.AccountService;
 using MediatR;
 
 namespace AccountService.Features.Transactions.CreateTransaction;
@@ -16,14 +19,18 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
     private readonly ITransactionRepository _repository;
     private readonly IAccountRepository _accountRepository;
     private readonly ITransactionWrapper _wrapper;
+    private readonly ITransactionProducer _producer;
+    private readonly IHttpContextAccessor _context;
 
-    public CreateTransactionHandler(IMapper mapper, IStorageContext storage, ITransactionRepository repository, IAccountRepository accountRepository, ITransactionWrapper wrapper)
+    public CreateTransactionHandler(IMapper mapper, IStorageContext storage, ITransactionRepository repository, IAccountRepository accountRepository, ITransactionWrapper wrapper, ITransactionProducer producer, IHttpContextAccessor context)
     {
         _mapper = mapper;
         _storage = storage;
         _repository = repository;
         _accountRepository = accountRepository;
         _wrapper = wrapper;
+        _producer = producer;
+        _context = context;
     }
 
     public async Task<TransactionFullDto> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
@@ -45,6 +52,7 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
 
         var result = await _repository.CreateAsync(transaction);
         await _storage.SaveChangesAsync(cancellationToken);
+        await ProduceAsync(result);
         return result;
     }
 
@@ -60,5 +68,33 @@ public class CreateTransactionHandler : IRequestHandler<CreateTransactionCommand
     {
         transaction.Currency = account.Currency;
         transaction.Id = Guid.NewGuid();
+    }
+
+    private async Task ProduceAsync(Transaction transaction)
+    {
+        var correlationId = (string)_context.HttpContext!.Items["X-Correlation-ID"]!;
+        var meta = MetaCreator.Create(Guid.Parse(correlationId), Guid.Parse("63fb0ed5-26f6-41c6-a8ef-726ab5cfa12c"));
+
+        if (transaction.Type == TransactionType.Debit)
+        {
+            var moneyEvent =
+                new MoneyDebitedEvent(Guid.NewGuid(), DateTime.UtcNow, meta, transaction.Currency, transaction.Description)
+                {
+                    Amount = transaction.Sum,
+                    OperationId = transaction.Id
+                };
+            await _producer.ProduceAsync(moneyEvent);
+        }
+        else
+        {
+            var moneyEvent =
+                new MoneyCreditedEvent(Guid.NewGuid(), DateTime.UtcNow, meta, transaction.Currency)
+                {
+                    Amount = transaction.Sum,
+                    OperationId = transaction.Id
+                };
+            await _producer.ProduceAsync(moneyEvent);
+        }
+
     }
 }

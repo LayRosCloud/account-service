@@ -42,6 +42,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .IsRequired()
             .ValueGeneratedOnAddOrUpdate()
             .IsRowVersion();
+
+        builder.Property(account => account.IsFrozen)
+            .IsRequired(false)
+            .HasColumnName("is_frozen");
+
         builder.HasMany(account => account.AccountTransactions)
             .WithOne(x => x.Account)
             .HasForeignKey(x => x.AccountId);

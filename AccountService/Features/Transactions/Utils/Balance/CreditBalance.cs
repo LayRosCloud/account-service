@@ -1,5 +1,6 @@
 ﻿using AccountService.Features.Accounts;
 using AccountService.Utils.Time;
+using Broker.AccountService;
 using FluentValidation;
 
 namespace AccountService.Features.Transactions.Utils.Balance;

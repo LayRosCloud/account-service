@@ -1,4 +1,5 @@
 ﻿using AccountService.Features.Currencies.VerifyCurrency;
+using Broker.AccountService;
 using FluentValidation;
 using MediatR;
 

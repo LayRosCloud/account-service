@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AccountService.Features.Accounts.Dto;
+using Broker.AccountService;
 using MediatR;
 
 namespace AccountService.Features.Accounts.CreateAccount;

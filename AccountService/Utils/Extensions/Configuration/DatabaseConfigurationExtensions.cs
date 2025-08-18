@@ -18,7 +18,7 @@ public static class DatabaseConfigurationExtensions
             .ConfigureRunner(runner =>
                 runner.AddPostgres()
                     .WithGlobalConnectionString("Connect")
-                    .ScanIn(typeof(InitializeSchema).Assembly)
+                    .ScanIn(typeof(InitializeSchema).Assembly, typeof(EventSchema).Assembly).For.Migrations()
             );
         return services;
     }

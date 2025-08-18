@@ -30,11 +30,12 @@ public class CurrencyController : ControllerBase
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(MbResponse<List<string>>), 200)]
-    public async Task<IActionResult> FindAllUsers()
+    public async Task<IActionResult> FindAllCurrencies()
     {
         var command = new FindAllCurrencyQuery();
         var currencies = await _mediator.Send(command);
         var result = ResultGenerator.Ok(currencies);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("742f8901-cebf-4272-ac34-30e7339a22be"));
         return Ok(result);
     }
 
@@ -54,6 +55,7 @@ public class CurrencyController : ControllerBase
         var command = new VerifyCurrencyCommand(code);
         var currency = await _mediator.Send(command);
         var result = ResultGenerator.Ok(currency);
+        CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("de2ec6dc-7a14-4fef-9f07-7accbbdf3677"));
         return Ok(result);
     }
 }

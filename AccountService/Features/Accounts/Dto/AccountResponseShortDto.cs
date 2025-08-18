@@ -1,4 +1,6 @@
-﻿namespace AccountService.Features.Accounts.Dto;
+﻿using Broker.AccountService;
+
+namespace AccountService.Features.Accounts.Dto;
 
 public class AccountResponseShortDto
 {
