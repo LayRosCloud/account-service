@@ -15,7 +15,7 @@ namespace AccountService.Tests.Features.AccountsTests;
 public class CreateAccountTests : AccountTests
 {
     private readonly Mock<IMediator> _mediator = new();
-    private readonly Mock<HttpContext> _contextMock = new();
+    private readonly Mock<IHttpContextAccessor> _contextMock = new();
     private readonly Mock<IProducer<AccountOpenedEvent>> _producerMock = new();
 
     [Fact]
@@ -31,7 +31,8 @@ public class CreateAccountTests : AccountTests
         var token = CancellationToken.None;
         _mediator.Setup(x => x.Send(It.IsAny<VerifyUserCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        _contextMock.Setup(x => x.Items["X-Correlation-ID"])
+        _contextMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+        _contextMock.Setup(x => x.HttpContext!.Items["X-Correlation-ID"])
             .Returns(Guid.NewGuid().ToString());
         
         var handler = new CreateAccountHandler(Mapper, _mediator.Object, StorageMock.Object, AccountRepositoryMock.Object, TransactionWrapperMock.Object, _contextMock.Object, _producerMock.Object);

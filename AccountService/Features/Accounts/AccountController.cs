@@ -125,7 +125,6 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(MbResponse<AccountResponseShortDto>), 201)]
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
-    
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountCommand command)
     {
         var account = await _mediator.Send(command);
@@ -178,11 +177,11 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(MbError), 400)]
     [ProducesResponseType(typeof(MbError), 404)]
     [ProducesResponseType(typeof(MbError), 409)]
-    public async Task<IActionResult> UpdateTypeAccount([FromBody] UpdateTypeAccountCommand typeCommand,
+    public async Task<IActionResult> UpdateTypeAccount([FromBody] UpdateAccountTypeCommand accountTypeCommand,
         Guid accountId)
     {
-        typeCommand.AccountId = accountId;
-        var account = await _mediator.Send(typeCommand);
+        accountTypeCommand.AccountId = accountId;
+        var account = await _mediator.Send(accountTypeCommand);
         var result = ResultGenerator.Ok(account);
         CausationHandler.ChangeCautionHeader(HttpContext, Guid.Parse("08639a4b-d0c0-41a0-ba1e-08cddbf3f283"));
         return Ok(result);

@@ -21,7 +21,7 @@ public class UpdateTypeAccountTests : AccountTests
         var ownerId = Guid.Parse("3ddd20b3-5445-42af-82e0-cf4a32f002d8");
         var accountFindById = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Credit);
         var accountUpdate = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Checking);
-        var command = new UpdateTypeAccountCommand(accountUpdate.Type)
+        var command = new UpdateAccountTypeCommand(accountUpdate.Type)
         {
             AccountId = accountFindById.Id,
         };
@@ -32,7 +32,7 @@ public class UpdateTypeAccountTests : AccountTests
         SetupTransaction<Account>(TransactionWrapperMock);
         var token = CancellationToken.None;
 
-        var handler = new UpdateTypeAccountHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
+        var handler = new UpdateAccountTypeHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
 
         //Act
         var result = await handler.Handle(command, token);
@@ -49,7 +49,7 @@ public class UpdateTypeAccountTests : AccountTests
         //Arrange
         var ownerId = Guid.Parse("3ddd20b3-5445-42af-82e0-cf4a32f002d8");
         var accountFindById = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Checking, balance: -10M);
-        var command = new UpdateTypeAccountCommand(AccountType.Deposit)
+        var command = new UpdateAccountTypeCommand(AccountType.Deposit)
         {
             AccountId = accountFindById.Id,
         };
@@ -60,7 +60,7 @@ public class UpdateTypeAccountTests : AccountTests
         SetupTransaction<Account>(TransactionWrapperMock);
         var token = CancellationToken.None;
 
-        var handler = new UpdateTypeAccountHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
+        var handler = new UpdateAccountTypeHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
 
         //Act
 
@@ -76,7 +76,7 @@ public class UpdateTypeAccountTests : AccountTests
         var accountFindById = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Checking, balance: 10M);
         var accountUpdate = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId,
             type: AccountType.Deposit, balance: 10M);
-        var command = new UpdateTypeAccountCommand(AccountType.Deposit)
+        var command = new UpdateAccountTypeCommand(AccountType.Deposit)
         {
             AccountId = accountFindById.Id,
         };
@@ -88,7 +88,7 @@ public class UpdateTypeAccountTests : AccountTests
 
         var token = CancellationToken.None;
 
-        var handler = new UpdateTypeAccountHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
+        var handler = new UpdateAccountTypeHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
 
         //Act
         var result = await handler.Handle(command, token);
@@ -106,7 +106,7 @@ public class UpdateTypeAccountTests : AccountTests
         var ownerId = Guid.Parse("3ddd20b3-5445-42af-82e0-cf4a32f002d8");
         var accountFindById = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Checking, percent: 6.7M);
         var accountUpdate = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Credit);
-        var command = new UpdateTypeAccountCommand(AccountType.Credit)
+        var command = new UpdateAccountTypeCommand(AccountType.Credit)
         {
             AccountId = accountFindById.Id,
         };
@@ -118,7 +118,7 @@ public class UpdateTypeAccountTests : AccountTests
         SetupTransaction<Account>(TransactionWrapperMock);
         var token = CancellationToken.None;
 
-        var handler = new UpdateTypeAccountHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
+        var handler = new UpdateAccountTypeHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
 
         //Act
         var result = await handler.Handle(command, token);
@@ -134,7 +134,7 @@ public class UpdateTypeAccountTests : AccountTests
         //Arrange
         var ownerId = Guid.Parse("3ddd20b3-5445-42af-82e0-cf4a32f002d8");
         var accountFindById = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Deposit);
-        var command = new UpdateTypeAccountCommand(AccountType.Credit)
+        var command = new UpdateAccountTypeCommand(AccountType.Credit)
         {
             AccountId = accountFindById.Id,
         };
@@ -145,7 +145,7 @@ public class UpdateTypeAccountTests : AccountTests
         SetupTransaction<Account>(TransactionWrapperMock);
         var token = CancellationToken.None;
 
-        var handler = new UpdateTypeAccountHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
+        var handler = new UpdateAccountTypeHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
 
         //Act
 
@@ -159,7 +159,7 @@ public class UpdateTypeAccountTests : AccountTests
         //Arrange
         var ownerId = Guid.Parse("3ddd20b3-5445-42af-82e0-cf4a32f002d8");
         var accountFindById = AccountCreator.CreateAccount(Guid.Parse("53b77b0a-848c-4e86-a3e5-f8074291b209"), ownerId, type: AccountType.Deposit);
-        var command = new UpdateTypeAccountCommand(AccountType.Credit)
+        var command = new UpdateAccountTypeCommand(AccountType.Credit)
         {
             AccountId = accountFindById.Id,
         };
@@ -170,7 +170,7 @@ public class UpdateTypeAccountTests : AccountTests
         SetupTransaction<Account>(TransactionWrapperMock);
         var token = CancellationToken.None;
 
-        var handler = new UpdateTypeAccountHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
+        var handler = new UpdateAccountTypeHandler(Mapper, _mediatorMock.Object, AccountRepositoryMock.Object, StorageMock.Object, TransactionWrapperMock.Object);
 
         //Act
 

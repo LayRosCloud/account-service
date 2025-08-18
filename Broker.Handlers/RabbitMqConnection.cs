@@ -15,7 +15,11 @@ public class RabbitMqConnection : IConnectionBroker
     {
         var factory = new ConnectionFactory()
         {
-            HostName = "localhost"
+            // ReSharper disable once StringLiteralTypo
+            HostName = "rabbitmq",
+            UserName = "guest",
+            Password = "guest",
+            Port = 5672
         };
         Connection = await factory.CreateConnectionAsync();
     }

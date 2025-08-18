@@ -13,17 +13,17 @@ public class RabbitMqProducer : IMessageProducer
         _connection = connection;
     }
 
-    public async Task SendAsync<T>(T message, string topic, string exchange = "")
+    public async Task SendAsync<T>(T message, string queue, string routingKey, string exchange = "")
     {
         await using var channel = await _connection.Connection!.CreateChannelAsync()!;
-        await channel.QueueDeclareAsync(topic, false, false, false);
+        await channel.QueueDeclareAsync(queue, false, false, false);
         var json = JsonSerializer.Serialize(message);
         var bytes = Encoding.UTF8.GetBytes(json);
         var body = new ReadOnlyMemory<byte>(bytes);
         var basicProperties = new BasicProperties();
         await channel.BasicPublishAsync(
             exchange,
-            topic,
+            routingKey,
             false,
             basicProperties,
             body);

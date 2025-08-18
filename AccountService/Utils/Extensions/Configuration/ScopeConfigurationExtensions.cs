@@ -1,5 +1,6 @@
 ﻿using AccountService.Broker;
 using AccountService.Broker.Account;
+using AccountService.Broker.Events;
 using AccountService.Broker.Transaction;
 using AccountService.Features.Accounts;
 using AccountService.Features.Transactions;
@@ -27,6 +28,7 @@ public static class ScopeConfigurationExtensions
         services.AddScoped<IMessageProducer, RabbitMqProducer>();
         services.AddScoped<IProducer<AccountOpenedEvent>, AccountProducer>();
         services.AddScoped<ITransactionProducer, TransactionProducer>();
+        services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IProducer<TransferCompletedEvent>, TransactionProducer>();
 
         return services;

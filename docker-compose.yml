@@ -1,4 +1,5 @@
 services:
+# applications
   accountservice:
     build:
       context: .
@@ -9,10 +10,23 @@ services:
     depends_on:
     - keycloak
     - postgres_account
+    - rabbitmq
+  notification-service:
+    build:
+      context: .
+      dockerfile: NotificationService/Dockerfile
+    restart: always
+    depends_on:
+    - keycloak
+    - postgres_notification 
+    - rabbitmq
+
+# auth service   
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:latest
     command: start-dev
+    restart: always
     environment:
         - KC_HEALTH_ENABLED=true
         - KEYCLOAK_ADMIN=${KC_ADMIN_LOGIN}
@@ -21,9 +35,23 @@ services:
     - ././containers/identity:/opt/keycloak/data
     ports:
     - '18000:8080'
+# brokers 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.13.7-management
+    restart: always
+    environment:
+    - RABBITMQ_DEFAULT_USER=guest
+    - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+    - '15672:15672'
+    - '5672:5672'
+
+# databases
   postgres_account:
     container_name: postgres_account
     image: postgres:16.2
+    restart: always
     environment:
       - 'POSTGRES_PASSWORD=admin'
       - 'POSTGRES_USER=admin'
@@ -32,3 +60,16 @@ services:
      - ./postgres-data:/var/lib/postgresql/data
     ports:
     - '5432:5432'
+
+  postgres_notification:
+    container_name: postgres_notification
+    image: postgres:16.2
+    restart: always
+    environment:
+      - 'POSTGRES_PASSWORD=admin'
+      - 'POSTGRES_USER=admin'
+      - 'POSTGRES_DB=event_base'
+    volumes:
+     - ./event-data:/var/lib/postgresql/data
+    ports:
+    - '5433:5432'

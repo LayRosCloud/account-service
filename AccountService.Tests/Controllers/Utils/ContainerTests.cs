@@ -1,10 +1,13 @@
 ﻿using AccountService.Utils.Data.Migrations;
+using Broker.Entity;
+using Broker.Handlers;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Testcontainers.PostgreSql;
 
 namespace AccountService.Tests.Controllers.Utils;
@@ -46,6 +49,18 @@ public class ContainerTests<TDbContext> : IAsyncLifetime, IDisposable where TDbC
                 if (descriptorMigrate != null)
                     services.Remove(descriptorMigrate);
 
+                var descriptorRabbitMq = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(IMessageProducer));
+                if (descriptorRabbitMq != null)
+                    services.Remove(descriptorRabbitMq);
+                var producerMock = new Mock<IMessageProducer>();
+                producerMock.Setup(x =>
+                    x.SendAsync(It.IsAny<EventWrapper>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>()
+                    )).Returns(Task.CompletedTask);
+                services.AddSingleton(producerMock.Object);
                 services.AddDbContext<TDbContext>(options =>
                     options.UseNpgsql(_dbContainer.GetConnectionString())
                         .EnableDetailedErrors()

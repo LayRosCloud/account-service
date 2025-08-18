@@ -14,6 +14,6 @@ public class AccountProducer : IProducer<AccountOpenedEvent>
 
     public async Task ProduceAsync(AccountOpenedEvent param)
     {
-        await _producer.SendAsync(param, "account.events");
+        await _producer.SendAsync(param, "account-service-queue", "account.events");
     }
 }

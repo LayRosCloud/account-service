@@ -2,8 +2,12 @@ using AccountService.Utils.Extensions;
 using AccountService.Utils.Middleware;
 using FluentValidation;
 using System.Reflection;
+using AccountService.Broker.Client;
+using AccountService.Broker.Events;
+using AccountService.Features.Accounts;
 using AccountService.Features.Transactions.DailyPercentAddToAccount;
 using AccountService.Utils.Extensions.Configuration;
+using Broker.Handlers;
 using FluentMigrator.Runner;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -48,6 +52,7 @@ var app = builder.Build();
 
 app.UseMiddleware<CorrelationMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<LoggerMiddleware>();
 if (!app.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
@@ -59,6 +64,12 @@ if (!app.Environment.IsEnvironment("Testing"))
         "AccrueInterest",
         () => hangJob.AccrueInterest(),
         Cron.Daily);
+    var connection = scope.ServiceProvider.GetRequiredService<IConnectionBroker>().Connection;
+    var repository = scope.ServiceProvider.GetRequiredService<IEventRepository>();
+    var accountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
+    await using var channel = await connection!.CreateChannelAsync();
+    var consumer = await ClientConsumer.CreateAsync(channel, repository, accountRepository);
+    await consumer.ConsumeAsync(CancellationToken.None);
 }
 app.UseCors(CorsConfigurationExtensions.CorsPolicy);
 app.UseStaticFiles();

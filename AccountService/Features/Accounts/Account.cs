@@ -15,6 +15,7 @@ public class Account : ICloneable, IDateCreator
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ClosedAt { get; set; }
     public long Version { get; set; }
+    public bool? IsFrozen { get; set; }
     public List<Transaction> AccountTransactions { get; } = new();
     public List<Transaction> CounterPartyTransactions { get; } = new();
 
