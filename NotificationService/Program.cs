@@ -34,8 +34,7 @@ var repository = provider.GetRequiredService<IEventRepository>();
 
 var connection = provider.GetRequiredService<IConnectionBroker>().Connection!;
 await provider.ListenAsync(connection, async (channel) =>
-    await AccountConsumer.CreateAsync(repository, channel)
-    );
+    await AccountConsumer.CreateAsync(repository, channel));
 var consumer = await TransactionMessageConsumer.CreateAsync(repository, connection);
 await consumer.ConsumeAsync(CancellationToken.None);
 

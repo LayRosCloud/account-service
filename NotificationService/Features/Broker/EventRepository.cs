@@ -22,4 +22,9 @@ public class EventRepository : IEventRepository
     {
         return await _storage.Events.AnyAsync(x => x.EventId == eventId);
     }
+
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return _storage.SaveChangesAsync(cancellationToken);
+    }
 }

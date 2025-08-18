@@ -1,6 +1,4 @@
-﻿using RabbitMQ.Client;
-
-namespace Broker.Handlers;
+﻿namespace Broker.Handlers;
 
 public interface IConsumer<in T>
 {

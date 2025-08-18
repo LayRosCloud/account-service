@@ -1,6 +1,5 @@
 ﻿using Broker.Handlers;
 using RabbitMQ.Client;
-using System.Threading;
 
 namespace NotificationService.Extensions;
 

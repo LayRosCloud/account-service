@@ -30,6 +30,7 @@ public static class ScopeConfigurationExtensions
         services.AddScoped<ITransactionProducer, TransactionProducer>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IProducer<TransferCompletedEvent>, TransactionProducer>();
+        services.AddScoped<IProducer<InterestAccruedEvent>, InterestAccruedProducer>();
 
         return services;
     }

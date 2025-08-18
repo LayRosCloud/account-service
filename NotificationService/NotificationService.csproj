@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Broker.AccountService\Broker.AccountService.csproj" />
+    <ProjectReference Include="..\Broker.Entity\Broker.Entity.csproj" />
     <ProjectReference Include="..\Broker.Handlers\Broker.Handlers.csproj" />
   </ItemGroup>
 
