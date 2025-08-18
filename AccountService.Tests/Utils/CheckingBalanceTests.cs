@@ -1,5 +1,4 @@
-﻿using AccountService.Features.Accounts;
-using AccountService.Features.Transactions.Utils.Balance;
+﻿using AccountService.Features.Transactions.Utils.Balance;
 using AccountService.Tests.Generator;
 using Broker.AccountService;
 using FluentValidation;

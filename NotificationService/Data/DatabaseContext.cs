@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore;
 using NotificationService.Data.Configuration;
 using NotificationService.Features.Broker;
 
@@ -17,10 +11,6 @@ public class DatabaseContext : DbContext, IStorageContext
     }
 
     public DbSet<EventEntity> Events { get; set; } = null!;
-    public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
-    {
-        return await Database.BeginTransactionAsync(cancellationToken);
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -23,7 +23,7 @@ public class EventRepository : IEventRepository
         return result.Entity;
     }
 
-    public Task<int> SaveChangesAsync(CancellationToken cancellation = new CancellationToken())
+    public Task<int> SaveChangesAsync(CancellationToken cancellation = new())
     {
         return _storage.SaveChangesAsync(cancellation);
     }
